@@ -101,7 +101,6 @@ async function loginUserController(req, res) {
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
-
         // set token in cookie
         res.cookie('token', token, {
             httpOnly: true,
@@ -140,8 +139,8 @@ async function logoutUserController(req, res) {
             // clear cookie
             res.clearCookie("token", {
                 httpOnly: true,
-                secure: true,
-                sameSite: "none"
+                secure: false,
+                sameSite: "lax"
             });
             res.status(200).json({ message: "Logout successful" });
         }
