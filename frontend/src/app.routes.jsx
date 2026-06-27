@@ -2,6 +2,7 @@ import {createBrowserRouter} from 'react-router-dom'
 import Login from './features/auth/pages/Login'
 import Register from './features/auth/pages/Register'
 import LandingPage from './pages/LandingPage'
+import NoteEditor from './features/notes/pages/NoteEditor'
 // import Home from './features/interview/pages/Home'
 // import Interview from './features/interview/pages/Interview'
 // import NotFound from './pages/NotFound'
@@ -19,7 +20,7 @@ export const router = createBrowserRouter([
     },   
     {
         path: "/",
-        element: <PublicRoute><LandingPage /></PublicRoute>
+        element: <PublicRoute><NoteEditor/></PublicRoute>
     },
     {
         path: "/dashboard",
