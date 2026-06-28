@@ -2,9 +2,9 @@ import {createBrowserRouter} from 'react-router-dom'
 import Login from './features/auth/pages/Login'
 import Register from './features/auth/pages/Register'
 import LandingPage from './pages/LandingPage'
+import Dashboard from './features/notes/pages/Dashboard'
 import NoteEditor from './features/notes/pages/NoteEditor'
 // import Home from './features/interview/pages/Home'
-// import Interview from './features/interview/pages/Interview'
 // import NotFound from './pages/NotFound'
 import Protected from './features/auth/components/Protected'
 import PublicRoute from './features/auth/components/PublicRoute'
@@ -20,16 +20,16 @@ export const router = createBrowserRouter([
     },   
     {
         path: "/",
-        element: <PublicRoute><NoteEditor/></PublicRoute>
+        element: <PublicRoute><LandingPage/></PublicRoute>
     },
     {
         path: "/dashboard",
-        element: <Protected><h1>hi dashboard</h1></Protected>
+        element: <Protected><Dashboard/></Protected>
     },
-    // {
-    //     path: "/interview/:interviewId",
-    //     element: <Protected><Interview /></Protected>
-    // },
+    {
+        path: "/notes/:id",
+        element: <Protected><NoteEditor /></Protected>
+    },
     // {
     // path: "*",
     // element: <NotFound />
