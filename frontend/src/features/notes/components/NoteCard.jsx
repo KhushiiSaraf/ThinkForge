@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 function getPreview(content) {
   try {
-    const firstParagraph = content?.content?.find(node => node.type === 'paragraph')
-    const text = firstParagraph?.content?.map(n => n.text || '').join('') || ''
+    const firstNode = content?.content?.find(node => node.content?.length > 0)
+    const text = firstNode?.content?.map(n => n.text || '').join('') || ''
     return text || 'No content yet'
   } catch {
     return 'No content yet'

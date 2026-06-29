@@ -7,7 +7,7 @@ import { useAuth } from "../../auth/hooks/useAuth";
 
 function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { notes, handleGetAllNotes, handleCreateNote, handleDeleteNote } = useNotes()
+  const { notes, handleGetAllNotes, handleCreateNote, handleDeleteNote, loading } = useNotes()
   const { user, handleLogout } = useAuth()
 
   useEffect(() => {
@@ -81,18 +81,23 @@ function Dashboard() {
         </div>
 
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {notes.map((note) => (
-            <NoteCard
-              key={note._id}
-              note={note}
-              onDelete={async (id) => {
-                await handleDeleteNote(id)
-                await handleGetAllNotes()
-                }}
-            />
-          ))}
-          <CreateNoteCard onClick={handleCreateNote} />
-        </section>
+        {loading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="bg-white rounded-2xl border border-slate-200 p-5 h-56 animate-pulse">
+              <div className="h-4 bg-slate-200 rounded w-3/4 mb-3"/>
+              <div className="h-3 bg-slate-100 rounded w-full mb-2"/>
+              <div className="h-3 bg-slate-100 rounded w-5/6"/>
+            </div>
+          ))
+        ) : (
+          <>
+            {notes.map((note) => (
+              <NoteCard key={note._id} note={note} onDelete={async (id) => { await handleDeleteNote(id); await handleGetAllNotes() }} />
+            ))}
+            <CreateNoteCard onClick={handleCreateNote} />
+          </>
+        )}
+      </section>
       </main>
 
     </div>
