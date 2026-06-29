@@ -15,10 +15,12 @@ app.use(cookieParser());
 // require all routes
 const authRouter = require('./routes/auth.routes');
 const notesRouter = require('./routes/notes.routes');
+const aiRouter = require('./routes/ai.routes');
 
 // use all routes
 app.use('/api/auth', authRouter);
 app.use('/api/notes', notesRouter);
+app.use('/api/ai', aiRouter);
 app.get('/api/health', (req, res) => {
     res.status(200).json({
         status: 'ok'
