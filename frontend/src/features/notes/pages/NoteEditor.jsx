@@ -8,10 +8,13 @@ import Highlight from '@tiptap/extension-highlight'
 import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { useNotes } from '../hooks/useNotes'
+import { useAI } from '../hooks/useAI'
 import { toast } from 'react-toastify'
+import EditorTopBar from '../components/EditorTopBar'
+import AIGenerateBar from '../components/AIGenerateBar'
 import '../styles/editor.css'
 
-function Toolbar({ editor, onSave, saving }) {
+function Toolbar({ editor }) {
   if (!editor) return null
 
   return (
@@ -35,11 +38,6 @@ function Toolbar({ editor, onSave, saving }) {
         if (url) editor.chain().focus().setLink({ href: url }).run()
       }}>Link</button>
       <button onClick={() => editor.chain().focus().unsetLink().run()}>Unlink</button>
-
-      {/* Save button */}
-      <button onClick={onSave} disabled={saving} style={{ marginLeft: 'auto' }}>
-        {saving ? 'Saving...' : 'Save'}
-      </button>
     </div>
   )
 }
@@ -47,8 +45,10 @@ function Toolbar({ editor, onSave, saving }) {
 export default function NoteEditor() {
   const { id } = useParams()
   const { handleGetNote, handleUpdateNote, currentNote } = useNotes()
+  const { handleGenerate, loading: aiLoading } = useAI()
   const [title, setTitle] = useState('Untitled')
   const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(true)
 
   const editor = useEditor({
     extensions: [
@@ -60,6 +60,9 @@ export default function NoteEditor() {
       Highlight.configure({ multicolor: false }),
     ],
     content: '',
+    onUpdate: () => {
+      setSaved(false) // any edit marks note as unsaved
+    },
   })
 
   // Load note on mount
@@ -71,10 +74,10 @@ export default function NoteEditor() {
   useEffect(() => {
     if (currentNote && editor) {
       setTitle(currentNote.title || 'Untitled')
-      // only set content if editor is empty (avoid overwriting while typing)
       if (currentNote.content && Object.keys(currentNote.content).length > 0) {
         editor.commands.setContent(currentNote.content)
       }
+      setSaved(true)
     }
   }, [currentNote, editor])
 
@@ -88,6 +91,7 @@ export default function NoteEditor() {
     })
     toast.success('Note saved')
     setSaving(false)
+    setSaved(true)
   }, [id, editor, title, handleUpdateNote])
 
   // Ctrl+S
@@ -102,16 +106,39 @@ export default function NoteEditor() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [handleSave])
 
+  // Title change also marks unsaved
+  const handleTitleChange = (newTitle) => {
+    setTitle(newTitle)
+    setSaved(false)
+  }
+
+  // AI Generate — inserts text at current cursor position
+  const handleAIGenerate = async (prompt) => {
+    const text = await handleGenerate(prompt)
+    if (text && editor) {
+      editor.chain().focus().insertContent(`<p>${text}</p>`).run()
+      setSaved(false)
+    } else {
+      toast.error('AI generation failed')
+    }
+  }
+
   return (
-    <div>
-      <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Untitled"
-        style={{ fontSize: '1.5rem', fontWeight: 'bold', border: 'none', outline: 'none', marginBottom: '8px', width: '100%' }}
+    <div className="min-h-screen bg-slate-50">
+      <EditorTopBar
+        title={title}
+        setTitle={handleTitleChange}
+        saving={saving}
+        saved={saved}
+        onSave={handleSave}
       />
-      <Toolbar editor={editor} onSave={handleSave} saving={saving} />
-      <EditorContent editor={editor} />
+
+      <div className="max-w-3xl mx-auto px-6 py-8">
+        <Toolbar editor={editor} />
+        <EditorContent editor={editor} />
+      </div>
+
+      <AIGenerateBar onGenerate={handleAIGenerate} loading={aiLoading} />
     </div>
   )
 }
