@@ -12,6 +12,7 @@ import { useAI } from '../hooks/useAI'
 import { toast } from 'react-toastify'
 import EditorTopBar from '../components/EditorTopBar'
 import AIGenerateBar from '../components/AIGenerateBar'
+import SelectionPopup from '../components/SelectionPopup'
 import '../styles/editor.css'
 
 function Toolbar({ editor }) {
@@ -45,7 +46,7 @@ function Toolbar({ editor }) {
 export default function NoteEditor() {
   const { id } = useParams()
   const { handleGetNote, handleUpdateNote, currentNote } = useNotes()
-  const { handleGenerate, loading: aiLoading } = useAI()
+  const { handleGenerate, handleRewrite, loading: aiLoading } = useAI()
   const [title, setTitle] = useState('Untitled')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(true)
@@ -123,6 +124,21 @@ export default function NoteEditor() {
     }
   }
 
+  // AI Rewrite — replaces selected text with rewritten text
+  const handleAIRewrite = async (selectedText, instruction, from, to) => {
+    const text = await handleRewrite(selectedText, instruction)
+    if (text && editor) {
+        editor.chain().focus().deleteRange({ from, to }).insertContentAt(from, `${text}`).run()
+        setSaved(false)
+    } else {
+        toast.error('Rewrite failed')
+    }
+  }
+  //web search
+  const handleSearchWeb = (text) => {
+    console.log('search web for:', text) // we will wire this in Phase 3
+  }
+
   return (
     <div className="min-h-screen bg-slate-50">
       <EditorTopBar
@@ -131,6 +147,13 @@ export default function NoteEditor() {
         saving={saving}
         saved={saved}
         onSave={handleSave}
+      />
+
+      <SelectionPopup
+      editor={editor}
+      onRewrite={handleAIRewrite}
+      onSearchWeb={handleSearchWeb}
+      aiLoading={aiLoading}
       />
 
       <div className="max-w-3xl mx-auto px-6 py-8">
