@@ -12,7 +12,10 @@ async function searchController(req, res) {
                 'X-API-KEY': process.env.SERPER_API_KEY,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ q: query, num: 5 })
+            body: JSON.stringify({ 
+                q: `${query} site:w3schools.com OR site:programiz.com OR site:codingninjas.com OR site:intellipaat.com OR site:guru99.com OR site:intellispot.com OR site:tutorialspoint.com OR site:tpointtech.com OR site:geeksforgeeks.org`,
+                num: 8
+            })
         })
 
         const data = await response.json()

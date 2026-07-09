@@ -13,6 +13,7 @@ import { toast } from 'react-toastify'
 import EditorTopBar from '../components/EditorTopBar'
 import AIGenerateBar from '../components/AIGenerateBar'
 import SelectionPopup from '../components/SelectionPopup'
+import WebSearchPanel from '../components/WebSearchPanel'
 import '../styles/editor.css'
 
 function Toolbar({ editor }) {
@@ -50,6 +51,9 @@ export default function NoteEditor() {
   const [title, setTitle] = useState('Untitled')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(true)
+
+  //web search state
+  const [searchQuery, setSearchQuery] = useState('')
 
   const editor = useEditor({
     extensions: [
@@ -136,32 +140,48 @@ export default function NoteEditor() {
   }
   //web search
   const handleSearchWeb = (text) => {
-    console.log('search web for:', text) // we will wire this in Phase 3
+    setSearchQuery(text)
+}
+
+  const handleInsertSnippet = (snippet) => {
+      if (editor) {
+          editor.chain().focus().insertContent(`<p>${snippet}</p>`).run()
+          setSaved(false)
+      }
   }
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <EditorTopBar
-        title={title}
-        setTitle={handleTitleChange}
-        saving={saving}
-        saved={saved}
-        onSave={handleSave}
-      />
+        <EditorTopBar
+            title={title}
+            setTitle={handleTitleChange}
+            saving={saving}
+            saved={saved}
+            onSave={handleSave}
+        />
 
-      <SelectionPopup
-      editor={editor}
-      onRewrite={handleAIRewrite}
-      onSearchWeb={handleSearchWeb}
-      aiLoading={aiLoading}
-      />
+        <div className="flex">
+            {/* Editor area */}
+            <div className="flex-1 max-w-3xl mx-auto px-6 py-8">
+                <Toolbar editor={editor} />
+                <EditorContent editor={editor} />
+            </div>
 
-      <div className="max-w-3xl mx-auto px-6 py-8">
-        <Toolbar editor={editor} />
-        <EditorContent editor={editor} />
-      </div>
+            {/* Web Search Panel */}
+            <WebSearchPanel
+               onInsert={handleInsertSnippet}
+               initialQuery={searchQuery}
+            />
+        </div>
 
-      <AIGenerateBar onGenerate={handleAIGenerate} loading={aiLoading} />
+        <SelectionPopup
+            editor={editor}
+            onRewrite={handleAIRewrite}
+            onSearchWeb={handleSearchWeb}
+            aiLoading={aiLoading}
+        />
+
+        <AIGenerateBar onGenerate={handleAIGenerate} loading={aiLoading} />
     </div>
-  )
+)
 }
