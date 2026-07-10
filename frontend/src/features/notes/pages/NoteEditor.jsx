@@ -78,6 +78,27 @@ export default function NoteEditor() {
     onUpdate: () => {
       setSaved(false) // any edit marks note as unsaved
     },
+    editorProps: {
+    handlePaste(view, event) {
+        const items = event.clipboardData?.items
+        if (!items) return false
+
+        for (const item of items) {
+            if (item.type.startsWith('image/')) {
+                const file = item.getAsFile()
+                const reader = new FileReader()
+                reader.onload = (e) => {
+                    view.dispatch(view.state.tr.replaceSelectionWith(
+                        view.state.schema.nodes.image.create({ src: e.target.result })
+                    ))
+                }
+                reader.readAsDataURL(file)
+                return true
+            }
+        }
+        return false
+    }   
+  }
   })
 
   // Load note on mount
