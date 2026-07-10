@@ -16,6 +16,7 @@ import SelectionPopup from '../components/SelectionPopup'
 import WebSearchPanel from '../components/WebSearchPanel'
 import DiagramModal from '../components/DiagramModal'
 import Image from '@tiptap/extension-image'
+import Placeholder from '@tiptap/extension-placeholder'
 import '../styles/editor.css'
 
 function Toolbar({ editor, onDiagramClick }) {
@@ -72,7 +73,10 @@ export default function NoteEditor() {
       TextStyle,
       Color,
       Highlight.configure({ multicolor: false }),
-      Image
+      Image,
+      Placeholder.configure({
+        placeholder: 'Start writing your note...',
+    }),
     ],
     content: '',
     onUpdate: () => {
@@ -182,14 +186,13 @@ export default function NoteEditor() {
   }
 
   //Diagram
-  const handleInsertDiagram = (svg) => {
-    if (editor) {
-        const blob = new Blob([svg], { type: 'image/svg+xml' })
-        const url = URL.createObjectURL(blob)
-        editor.chain().focus().setImage({ src: url }).run()
-        setSaved(false)
+    const handleInsertDiagram = (svg) => {
+        if (editor) {
+            const base64 = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`
+            editor.chain().focus().setImage({ src: base64 }).run()
+            setSaved(false)
+        }
     }
-  }
 
   return (
     <div className="min-h-screen bg-slate-50">

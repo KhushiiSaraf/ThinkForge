@@ -8,3 +8,34 @@
 .tiptap p { margin: 0.5rem 0; }
 .tiptap strong { font-weight: 700; }
 .tiptap em { font-style: italic; }
+/* Give the editor a visible area with border */
+.tiptap {
+    min-height: 70vh;
+    padding: 1.5rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    outline: none;
+    cursor: text;
+}
+
+/* Highlight border when focused */
+.tiptap:focus {
+    border-color: #6366f1;
+}
+
+/* Show cursor line indicator */
+.tiptap p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: #94a3b8;
+    pointer-events: none;
+    height: 0;
+}
+.tiptap img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    display: block;
+    margin: 0.5rem 0;
+}
