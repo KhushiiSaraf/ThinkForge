@@ -50,4 +50,37 @@ async function rewriteController(req, res) {
     }
 }
 
-module.exports = { generateController, rewriteController };
+/**
+ * @name generateDiagramController
+ * @route POST /api/ai/diagram
+ * @desc Generate a Mermaid flowchart diagram based on a prompt
+ * @access Private
+ */
+
+async function generateDiagramController(req, res) {
+    const { prompt } = req.body;
+
+    if (!prompt) {
+        return res.status(400).json({ message: 'Prompt is required' });
+    }
+
+    try {
+        const fullPrompt = `Generate a Mermaid flowchart diagram based on this description: "${prompt}". 
+        Rules:
+        - Return ONLY the Mermaid syntax, no explanation, no markdown backticks
+        - Always start with: flowchart TD
+        - Keep it simple, max 10 nodes
+        - Only use --> for connections
+        - Use square brackets for all nodes like: A[Label]`
+
+        const result = await model.generateContent(fullPrompt)
+        const text = result.response.text().trim()
+        res.status(200).json({ syntax: text });
+    } catch (error) {
+        console.error('Error in generateDiagramController:', error);
+        res.status(500).json({ message: 'Diagram generation failed' });
+    }
+}
+
+module.exports = { generateController, rewriteController, generateDiagramController };
+

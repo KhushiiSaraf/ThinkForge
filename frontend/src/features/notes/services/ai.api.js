@@ -25,3 +25,12 @@ export async function rewriteContent(selectedText, instruction) {
         return error.response?.data;
     }
 }
+
+export async function generateDiagram(prompt) {
+    try {
+        const response = await api.post('/api/ai/diagram', { prompt })
+        return response.data;
+    } catch (error) {
+        return error.response?.data;
+    }
+}

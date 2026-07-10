@@ -14,9 +14,11 @@ import EditorTopBar from '../components/EditorTopBar'
 import AIGenerateBar from '../components/AIGenerateBar'
 import SelectionPopup from '../components/SelectionPopup'
 import WebSearchPanel from '../components/WebSearchPanel'
+import DiagramModal from '../components/DiagramModal'
+import Image from '@tiptap/extension-image'
 import '../styles/editor.css'
 
-function Toolbar({ editor }) {
+function Toolbar({ editor, onDiagramClick }) {
   if (!editor) return null
 
   return (
@@ -40,6 +42,10 @@ function Toolbar({ editor }) {
         if (url) editor.chain().focus().setLink({ href: url }).run()
       }}>Link</button>
       <button onClick={() => editor.chain().focus().unsetLink().run()}>Unlink</button>
+      <button onClick={() => {
+          console.log('diagram clicked')
+          onDiagramClick()
+      }}>Diagram</button>
     </div>
   )
 }
@@ -47,13 +53,16 @@ function Toolbar({ editor }) {
 export default function NoteEditor() {
   const { id } = useParams()
   const { handleGetNote, handleUpdateNote, currentNote } = useNotes()
-  const { handleGenerate, handleRewrite, loading: aiLoading } = useAI()
+  const { handleGenerate, handleRewrite,handleGenerateDiagram, loading: aiLoading } = useAI()
   const [title, setTitle] = useState('Untitled')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(true)
 
   //web search state
   const [searchQuery, setSearchQuery] = useState('')
+
+  //Diagram state
+  const [diagramModalOpen, setDiagramModalOpen] = useState(false)
 
   const editor = useEditor({
     extensions: [
@@ -63,6 +72,7 @@ export default function NoteEditor() {
       TextStyle,
       Color,
       Highlight.configure({ multicolor: false }),
+      Image
     ],
     content: '',
     onUpdate: () => {
@@ -150,6 +160,16 @@ export default function NoteEditor() {
       }
   }
 
+  //Diagram
+  const handleInsertDiagram = (svg) => {
+    if (editor) {
+        const blob = new Blob([svg], { type: 'image/svg+xml' })
+        const url = URL.createObjectURL(blob)
+        editor.chain().focus().setImage({ src: url }).run()
+        setSaved(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-slate-50">
         <EditorTopBar
@@ -163,7 +183,7 @@ export default function NoteEditor() {
         <div className="flex">
             {/* Editor area */}
             <div className="flex-1 max-w-3xl mx-auto px-6 py-8">
-                <Toolbar editor={editor} />
+                <Toolbar editor={editor} onDiagramClick={() => setDiagramModalOpen(true)} />
                 <EditorContent editor={editor} />
             </div>
 
@@ -182,6 +202,15 @@ export default function NoteEditor() {
         />
 
         <AIGenerateBar onGenerate={handleAIGenerate} loading={aiLoading} />
-    </div>
+
+        {diagramModalOpen && (
+            <DiagramModal
+                onClose={() => setDiagramModalOpen(false)}
+                onInsert={handleInsertDiagram}
+                onGenerate={handleGenerateDiagram}
+                loading={aiLoading}
+            />
+        )}
+     </div>
 )
 }
