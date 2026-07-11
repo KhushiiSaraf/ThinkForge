@@ -22,6 +22,7 @@ import WebSearchPanel from '../components/WebSearchPanel'
 import DiagramModal from '../components/DiagramModal'
 import Image from '@tiptap/extension-image'
 import Placeholder from '@tiptap/extension-placeholder'
+import { marked } from 'marked'
 import '../styles/editor.css'
 
 
@@ -38,69 +39,69 @@ function Toolbar({ editor, onDiagramClick }) {
     <div className="flex items-center gap-1 mb-4 p-2 bg-white border border-slate-200 rounded-xl flex-wrap">
       
       <button title="Bold" className={btnClass(editor.isActive('bold'))}
-  onClick={() => editor.chain().focus().toggleBold().run()}>
-  <Bold size={16} />
-</button>
+        onClick={() => editor.chain().focus().toggleBold().run()}>
+        <Bold size={16} />
+      </button>
 
-<button title="Italic" className={btnClass(editor.isActive('italic'))}
-  onClick={() => editor.chain().focus().toggleItalic().run()}>
-  <Italic size={16} />
-</button>
+      <button title="Italic" className={btnClass(editor.isActive('italic'))}
+        onClick={() => editor.chain().focus().toggleItalic().run()}>
+        <Italic size={16} />
+      </button>
 
-<button title="Underline" className={btnClass(editor.isActive('underline'))}
-  onClick={() => editor.chain().focus().toggleUnderline().run()}>
-  <UnderlineIcon size={16} />
-</button>
+      <button title="Underline" className={btnClass(editor.isActive('underline'))}
+        onClick={() => editor.chain().focus().toggleUnderline().run()}>
+        <UnderlineIcon size={16} />
+      </button>
 
-<button title="Heading 1" className={btnClass(editor.isActive('heading', { level: 1 }))}
-  onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>
-  <Heading1 size={16} />
-</button>
+      <button title="Heading 1" className={btnClass(editor.isActive('heading', { level: 1 }))}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>
+        <Heading1 size={16} />
+      </button>
 
-<button title="Heading 2" className={btnClass(editor.isActive('heading', { level: 2 }))}
-  onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
-  <Heading2 size={16} />
-</button>
+      <button title="Heading 2" className={btnClass(editor.isActive('heading', { level: 2 }))}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
+        <Heading2 size={16} />
+      </button>
 
-<button title="Bullet List" className={btnClass(editor.isActive('bulletList'))}
-  onClick={() => editor.chain().focus().toggleBulletList().run()}>
-  <List size={16} />
-</button>
+      <button title="Bullet List" className={btnClass(editor.isActive('bulletList'))}
+        onClick={() => editor.chain().focus().toggleBulletList().run()}>
+        <List size={16} />
+      </button>
 
-<button title="Numbered List" className={btnClass(editor.isActive('orderedList'))}
-  onClick={() => editor.chain().focus().toggleOrderedList().run()}>
-  <ListOrdered size={16} />
-</button>
+      <button title="Numbered List" className={btnClass(editor.isActive('orderedList'))}
+        onClick={() => editor.chain().focus().toggleOrderedList().run()}>
+        <ListOrdered size={16} />
+      </button>
 
-<button title="Code Block" className={btnClass(editor.isActive('codeBlock'))}
-  onClick={() => editor.chain().focus().toggleCodeBlock().run()}>
-  <Code size={16} />
-</button>
+      <button title="Code Block" className={btnClass(editor.isActive('codeBlock'))}
+        onClick={() => editor.chain().focus().toggleCodeBlock().run()}>
+        <Code size={16} />
+      </button>
 
-<button title="Highlight" className={btnClass(editor.isActive('highlight'))}
-  onClick={() => editor.chain().focus().toggleHighlight().run()}>
-  <Highlighter size={16} />
-</button>
+      <button title="Highlight" className={btnClass(editor.isActive('highlight'))}
+        onClick={() => editor.chain().focus().toggleHighlight().run()}>
+        <Highlighter size={16} />
+      </button>
 
-<button title="Add Link" className={btnClass(editor.isActive('link'))}
-  onClick={() => {
-    const url = window.prompt('Enter URL')
-    if (url) editor.chain().focus().setLink({ href: url }).run()
-  }}>
-  <LinkIcon size={16} />
-</button>
+      <button title="Add Link" className={btnClass(editor.isActive('link'))}
+        onClick={() => {
+          const url = window.prompt('Enter URL')
+          if (url) editor.chain().focus().setLink({ href: url }).run()
+        }}>
+        <LinkIcon size={16} />
+      </button>
 
-<button title="Remove Link" className={btnClass(false)}
-  onClick={() => editor.chain().focus().unsetLink().run()}>
-  <Unlink size={16} />
-</button>
+      <button title="Remove Link" className={btnClass(false)}
+        onClick={() => editor.chain().focus().unsetLink().run()}>
+        <Unlink size={16} />
+      </button>
 
-<button title="Generate Diagram" className={btnClass(false)} onClick={onDiagramClick}>
-  <GitFork size={16} />
-</button>
+      <button title="Generate Diagram" className={btnClass(false)} onClick={onDiagramClick}>
+        <GitFork size={16} />
+      </button>
 
-    </div>
-  )
+          </div>
+        )
 }
 export default function NoteEditor() {
   const { id } = useParams()
@@ -207,10 +208,11 @@ export default function NoteEditor() {
   const handleAIGenerate = async (prompt) => {
     const text = await handleGenerate(prompt)
     if (text && editor) {
-      editor.chain().focus().insertContent(`<p>${text}</p>`).run()
-      setSaved(false)
+        const html = marked(text)
+        editor.chain().focus().insertContent(html).run()
+        setSaved(false)
     } else {
-      toast.error('AI generation failed')
+        toast.error('AI generation failed')
     }
   }
 
