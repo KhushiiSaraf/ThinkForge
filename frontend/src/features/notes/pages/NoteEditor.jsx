@@ -7,6 +7,11 @@ import { TextStyle } from '@tiptap/extension-text-style'
 import Highlight from '@tiptap/extension-highlight'
 import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
+import { 
+  Bold, Italic, Underline as UnderlineIcon, Heading1, Heading2, 
+  List, ListOrdered, Code, Highlighter, Link as LinkIcon, 
+  Unlink, GitFork
+} from 'lucide-react'
 import { useNotes } from '../hooks/useNotes'
 import { useAI } from '../hooks/useAI'
 import { toast } from 'react-toastify'
@@ -19,38 +24,84 @@ import Image from '@tiptap/extension-image'
 import Placeholder from '@tiptap/extension-placeholder'
 import '../styles/editor.css'
 
+
 function Toolbar({ editor, onDiagramClick }) {
   if (!editor) return null
 
+  const btnClass = (active) => 
+    `p-2 rounded-lg transition ${active 
+      ? 'bg-indigo-50 text-indigo-600' 
+      : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700'
+    }`
+
   return (
-    <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
-      <button onClick={() => editor.chain().focus().toggleBold().run()}>Bold</button>
-      <button onClick={() => editor.chain().focus().toggleItalic().run()}>Italic</button>
-      <button onClick={() => editor.chain().focus().toggleUnderline().run()}>Underline</button>
-      <button onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>H1</button>
-      <button onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>H2</button>
-      <button onClick={() => editor.chain().focus().toggleBulletList().run()}>Bullet List</button>
-      <button onClick={() => editor.chain().focus().toggleOrderedList().run()}>Numbered List</button>
-      <button onClick={() => editor.chain().focus().toggleCodeBlock().run()}>Code</button>
-      <button onClick={() => editor.chain().focus().toggleHighlight().run()}>Highlight</button>
-      <input
-        type="color"
-        onInput={(e) => editor.chain().focus().setColor(e.target.value).run()}
-        title="Text color"
-      />
-      <button onClick={() => {
-        const url = window.prompt('Enter URL')
-        if (url) editor.chain().focus().setLink({ href: url }).run()
-      }}>Link</button>
-      <button onClick={() => editor.chain().focus().unsetLink().run()}>Unlink</button>
-      <button onClick={() => {
-          console.log('diagram clicked')
-          onDiagramClick()
-      }}>Diagram</button>
+    <div className="flex items-center gap-1 mb-4 p-2 bg-white border border-slate-200 rounded-xl flex-wrap">
+      
+      <button title="Bold" className={btnClass(editor.isActive('bold'))}
+  onClick={() => editor.chain().focus().toggleBold().run()}>
+  <Bold size={16} />
+</button>
+
+<button title="Italic" className={btnClass(editor.isActive('italic'))}
+  onClick={() => editor.chain().focus().toggleItalic().run()}>
+  <Italic size={16} />
+</button>
+
+<button title="Underline" className={btnClass(editor.isActive('underline'))}
+  onClick={() => editor.chain().focus().toggleUnderline().run()}>
+  <UnderlineIcon size={16} />
+</button>
+
+<button title="Heading 1" className={btnClass(editor.isActive('heading', { level: 1 }))}
+  onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>
+  <Heading1 size={16} />
+</button>
+
+<button title="Heading 2" className={btnClass(editor.isActive('heading', { level: 2 }))}
+  onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
+  <Heading2 size={16} />
+</button>
+
+<button title="Bullet List" className={btnClass(editor.isActive('bulletList'))}
+  onClick={() => editor.chain().focus().toggleBulletList().run()}>
+  <List size={16} />
+</button>
+
+<button title="Numbered List" className={btnClass(editor.isActive('orderedList'))}
+  onClick={() => editor.chain().focus().toggleOrderedList().run()}>
+  <ListOrdered size={16} />
+</button>
+
+<button title="Code Block" className={btnClass(editor.isActive('codeBlock'))}
+  onClick={() => editor.chain().focus().toggleCodeBlock().run()}>
+  <Code size={16} />
+</button>
+
+<button title="Highlight" className={btnClass(editor.isActive('highlight'))}
+  onClick={() => editor.chain().focus().toggleHighlight().run()}>
+  <Highlighter size={16} />
+</button>
+
+<button title="Add Link" className={btnClass(editor.isActive('link'))}
+  onClick={() => {
+    const url = window.prompt('Enter URL')
+    if (url) editor.chain().focus().setLink({ href: url }).run()
+  }}>
+  <LinkIcon size={16} />
+</button>
+
+<button title="Remove Link" className={btnClass(false)}
+  onClick={() => editor.chain().focus().unsetLink().run()}>
+  <Unlink size={16} />
+</button>
+
+<button title="Generate Diagram" className={btnClass(false)} onClick={onDiagramClick}>
+  <GitFork size={16} />
+</button>
+
     </div>
   )
 }
-
 export default function NoteEditor() {
   const { id } = useParams()
   const { handleGetNote, handleUpdateNote, currentNote } = useNotes()
