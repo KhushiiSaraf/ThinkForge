@@ -63,11 +63,23 @@ export const useAuth = () => {
         }
     }
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const data = await getMe();
-                if (data?.user) {
+    const refetchUser = async () => {
+    try {
+        const data = await getMe()
+        if (data?.user) {
+            setUser(data.user)
+            console.log('user refetched:', data.user)
+        }
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+useEffect(() => {
+    const fetchUser = async () => {
+        try {
+            const data = await getMe();
+            if (data?.user) {
                     setUser(data.user);
                 }
             } catch (error) {
@@ -81,5 +93,5 @@ export const useAuth = () => {
         fetchUser();
     }, [])
 
-    return { user, loading, error, authChecking, handleLogin, handleRegister, handleLogout };
+    return { user, loading, error, authChecking, handleLogin, handleRegister, handleLogout, refetchUser }
 }

@@ -164,7 +164,8 @@ async function getMeController(req, res) {
         user: {
             id: user._id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            plan: user.plan
         }
     });
 }
