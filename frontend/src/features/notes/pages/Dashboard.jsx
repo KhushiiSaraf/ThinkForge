@@ -4,11 +4,13 @@ import NoteCard from "../components/NoteCard";
 import { useNotes } from "../hooks/useNotes";
 import { useAuth } from "../../auth/hooks/useAuth";
 import ConfirmDialog from "../components/ConfirmDialog";
+import { usePayment } from "../hooks/usePayment";
 
 function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { notes, handleGetAllNotes, handleCreateNote, handleDeleteNote, loading } = useNotes()
   const { user, handleLogout } = useAuth()
+  const { loading: paymentLoading, handlePayment } = usePayment()
 
   // Confirm dialog state
   const [confirmDialog, setConfirmDialog] = useState(null)
@@ -67,6 +69,15 @@ function Dashboard() {
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
             </div>
+            {user?.plan !== 'pro' && (
+    <button
+        onClick={() => handlePayment(user, () => window.location.reload())}
+        disabled={paymentLoading}
+        className="bg-indigo-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition"
+    >
+        Go Pro
+    </button>
+)}
             <button onClick={() => setConfirmDialog({ type: 'logout' })} className="p-2 rounded-lg hover:bg-slate-100">
               <LogOut size={18} className="text-slate-600" />
           </button>
