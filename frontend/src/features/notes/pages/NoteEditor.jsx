@@ -24,7 +24,8 @@ import Image from '@tiptap/extension-image'
 import Placeholder from '@tiptap/extension-placeholder'
 import { marked } from 'marked'
 import '../styles/editor.css'
-
+import { useSocket } from '../hooks/useSocket'
+import { useAuth } from '../../auth/hooks/useAuth'
 
 function Toolbar({ editor, onDiagramClick }) {
   if (!editor) return null
@@ -117,6 +118,7 @@ export default function NoteEditor() {
   //Diagram state
   const [diagramModalOpen, setDiagramModalOpen] = useState(false)
 
+  
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
@@ -131,7 +133,7 @@ export default function NoteEditor() {
     }),
     ],
     content: '',
-    onUpdate: () => {
+    onUpdate: ({ editor }) => {
       setSaved(false) // any edit marks note as unsaved
     },
     editorProps: {
@@ -140,23 +142,26 @@ export default function NoteEditor() {
         if (!items) return false
 
         for (const item of items) {
-            if (item.type.startsWith('image/')) {
-                const file = item.getAsFile()
-                const reader = new FileReader()
-                reader.onload = (e) => {
-                    view.dispatch(view.state.tr.replaceSelectionWith(
-                        view.state.schema.nodes.image.create({ src: e.target.result })
-                    ))
-                }
-                reader.readAsDataURL(file)
-                return true
+          if (item.type.startsWith('image/')) {
+            const file = item.getAsFile()
+            const reader = new FileReader()
+            reader.onload = (e) => {
+              view.dispatch(view.state.tr.replaceSelectionWith(
+                view.state.schema.nodes.image.create({ src: e.target.result })
+              ))
             }
+            reader.readAsDataURL(file)
+            return true
+          }
         }
         return false
-    }   
-  }
+      }   
+    }
   })
-
+  
+  // Socket for real-time collaboration
+  const { user } = useAuth()
+  const { emitUpdate } = useSocket(id, user, editor)
   // Load note on mount
   useEffect(() => {
     if (id) handleGetNote(id)
@@ -246,6 +251,16 @@ export default function NoteEditor() {
             setSaved(false)
         }
     }
+
+  //Watches editor changes:
+  useEffect(() => {
+    if (!editor) return
+    const handler = () => {
+        emitUpdate(editor.getJSON())
+    }
+    editor.on('update', handler)
+    return () => editor.off('update', handler)
+  }, [editor, emitUpdate])
 
   return (
     <div className="min-h-screen bg-slate-50">
