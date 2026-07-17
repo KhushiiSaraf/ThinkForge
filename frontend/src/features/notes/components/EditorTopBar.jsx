@@ -27,33 +27,33 @@ function EditorTopBar({ title, setTitle, saving, saved, onSave, onShareClick }) 
 }
 
   return (
-    <div className="flex items-center justify-between px-6 py-3 border-b border-slate-200 bg-white sticky top-0 z-40">
-      <div className="flex items-center gap-4">
-        <button onClick={() => navigate('/dashboard')} className="p-2 rounded-lg hover:bg-slate-100">
+    <div className="flex flex-col gap-3 px-4 py-3 border-b border-slate-200 bg-white sticky top-0 z-40 sm:px-6 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-2 min-w-0 sm:flex-row sm:items-center sm:gap-4">
+        <button onClick={() => navigate('/dashboard')} className="p-2 rounded-lg hover:bg-slate-100 self-start sm:self-auto">
           <ArrowLeft size={18} className="text-slate-600" />
         </button>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Untitled"
-          className="text-lg font-semibold outline-none border-none bg-transparent"
+          className="w-full text-base font-semibold outline-none border-none bg-transparent sm:text-lg"
         />
-        <span className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-500 font-medium">
+        <span className="self-start text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-500 font-medium sm:self-auto">
           {saving ? 'SAVING...' : saved ? 'SAVED' : 'UNSAVED'}
         </span>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         <button
             onClick={handleExportPDF}
-            className="flex items-center gap-2 text-sm text-slate-600 hover:bg-slate-100 px-3 py-2 rounded-lg"
+            className="flex items-center justify-center gap-2 text-sm text-slate-600 hover:bg-slate-100 px-3 py-2 rounded-lg"
         >
             <FileDown size={16} />
             Export PDF
         </button>
         <button
           onClick={onShareClick}
-          className="flex items-center gap-2 text-sm text-slate-600 hover:bg-slate-100 px-3 py-2 rounded-lg"
+          className="flex items-center justify-center gap-2 text-sm text-slate-600 hover:bg-slate-100 px-3 py-2 rounded-lg"
          >
           <Share2 size={16} />
           Share

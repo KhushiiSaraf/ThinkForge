@@ -32,13 +32,13 @@ function Toolbar({ editor, onDiagramClick }) {
   if (!editor) return null
 
   const btnClass = (active) => 
-    `p-2 rounded-lg transition ${active 
+    `p-2 rounded-lg transition shrink-0 ${active 
       ? 'bg-indigo-50 text-indigo-600' 
       : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700'
     }`
 
   return (
-    <div className="flex items-center gap-1 mb-4 p-2 bg-white border border-slate-200 rounded-xl flex-wrap">
+    <div className="flex items-center gap-1 mb-4 p-2 bg-white border border-slate-200 rounded-xl flex-wrap overflow-x-auto">
       
       <button title="Bold" className={btnClass(editor.isActive('bold'))}
         onClick={() => editor.chain().focus().toggleBold().run()}>
@@ -288,25 +288,29 @@ export default function NoteEditor() {
         />
 
         {isSharedNote && noteOwner && (
-            <div className="bg-indigo-50 border-b border-indigo-100 px-6 py-2">
+            <div className="bg-indigo-50 border-b border-indigo-100 px-4 py-2 sm:px-6">
                 <span className="text-xs text-indigo-600 font-medium">
                     Shared document — originally created by {noteOwner}
                 </span>
             </div>
         )}
 
-        <div className="flex">
+        <div className="flex flex-col lg:flex-row">
             {/* Editor area */}
-            <div className="flex-1 max-w-3xl mx-auto px-6 py-8">
+            <div className="flex-1 w-full max-w-3xl mx-auto px-4 py-4 sm:px-6 sm:py-8">
                 <Toolbar editor={editor} onDiagramClick={() => setDiagramModalOpen(true)} />
-                <EditorContent editor={editor} />
+                <div className="w-full">
+                    <EditorContent editor={editor} />
+                </div>
             </div>
 
             {/* Web Search Panel */}
-            <WebSearchPanel
-               onInsert={handleInsertSnippet}
-               initialQuery={searchQuery}
-            />
+            <div className="w-full lg:w-auto">
+                <WebSearchPanel
+                   onInsert={handleInsertSnippet}
+                   initialQuery={searchQuery}
+                />
+            </div>
         </div>
 
         <SelectionPopup

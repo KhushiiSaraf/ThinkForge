@@ -18,7 +18,7 @@ function WebSearchPanel({ onInsert, initialQuery }) {
     }, [initialQuery])
 
     return (
-        <div className="w-80 sticky top-16 h-screen bg-white border-l border-slate-200 flex flex-col">
+        <div className="w-full border-t border-slate-200 bg-white flex flex-col lg:w-80 lg:border-t-0 lg:border-l lg:sticky lg:top-16 lg:h-screen">
 
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200">

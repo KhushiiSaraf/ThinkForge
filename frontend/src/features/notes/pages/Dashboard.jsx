@@ -66,94 +66,178 @@ function Dashboard() {
     <div className="min-h-screen bg-slate-50">
 
       {/* NAVBAR */}
-      <nav className="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto h-16 px-6 flex items-center justify-between">
-
+      <nav className="bg-white/95 backdrop-blur border-b border-slate-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto h-16 px-4 sm:px-6 flex items-center justify-between">
           {/* Left — Logo + Nav */}
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-3 sm:gap-8 min-w-0">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center shrink-0">
                 <Zap className="w-4 h-4 text-white" />
               </div>
-              <h1 className="font-bold text-lg">Noteflow</h1>
+              <h1 className="font-bold text-lg truncate">Noteflow</h1>
             </div>
 
             <div className="hidden md:flex gap-1">
               <button
                 onClick={() => setActiveTab('notes')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'notes' ? 'bg-slate-100' : 'hover:bg-slate-100 text-slate-600'}`}
-            >
+                className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'notes' ? 'bg-slate-100 text-slate-900' : 'hover:bg-slate-100 text-slate-600'}`}
+              >
                 Notes
-            </button>
-            <button
+              </button>
+              <button
                 onClick={() => setActiveTab('shared')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'shared' ? 'bg-slate-100' : 'hover:bg-slate-100 text-slate-600'}`}
-            >
+                className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'shared' ? 'bg-slate-100 text-slate-900' : 'hover:bg-slate-100 text-slate-600'}`}
+              >
                 Shared
-            </button>
+              </button>
             </div>
           </div>
 
-          {/* Right */}
+          {/* Desktop actions */}
           <div className="hidden md:flex items-center gap-4 search-container relative">
             <div className="flex items-center gap-2 bg-slate-100 rounded-xl px-3 py-2 w-56">
               <Search size={15} className="text-slate-400 shrink-0" />
               <input
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search notes..."
-                  className="bg-transparent text-sm outline-none w-full text-slate-700 placeholder:text-slate-400"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search notes..."
+                className="bg-transparent text-sm outline-none w-full text-slate-700 placeholder:text-slate-400"
               />
-          </div>
+            </div>
             <div className="h-6 w-px bg-slate-200" />
             <div className="flex items-center gap-3">
               <div className="text-right">
                 <h3 className="font-semibold text-sm">{user?.name}</h3>
                 <p className="text-xs text-slate-400">{user?.plan?.toUpperCase()} PLAN</p>
               </div>
-              <div className="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold text-sm">
+              <div className="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold text-sm shrink-0">
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
             </div>
             {user?.plan !== 'pro' && (
-            <button
+              <button
                 onClick={() => handlePayment(user, refetchUser)}
                 disabled={paymentLoading}
                 className="bg-indigo-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition"
-            >
+              >
                 Go Pro
-            </button>
-        )}
+              </button>
+            )}
             <button onClick={() => setConfirmDialog({ type: 'logout' })} className="p-2 rounded-lg hover:bg-slate-100">
               <LogOut size={18} className="text-slate-600" />
-          </button>
+            </button>
           </div>
 
-          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden">
-            {menuOpen ? <X /> : <Menu />}
-          </button>
+          {/* Mobile actions */}
+          <div className="flex items-center gap-2 md:hidden">
+            <button
+              onClick={() => {
+                setSearchOpen((prev) => !prev)
+                setMenuOpen(false)
+              }}
+              className="p-2 rounded-lg hover:bg-slate-100"
+            >
+              <Search size={18} className="text-slate-600" />
+            </button>
+            <button onClick={() => setMenuOpen(!menuOpen)} className="p-2 rounded-lg hover:bg-slate-100">
+              {menuOpen ? <X size={18} className="text-slate-600" /> : <Menu size={18} className="text-slate-600" />}
+            </button>
+          </div>
         </div>
+
+        {searchOpen && (
+          <div className="md:hidden border-t border-slate-200 bg-white px-4 py-3">
+            <div className="flex items-center gap-2 bg-slate-100 rounded-xl px-3 py-2 search-container">
+              <Search size={15} className="text-slate-400 shrink-0" />
+              <input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search notes..."
+                className="bg-transparent text-sm outline-none w-full text-slate-700 placeholder:text-slate-400"
+                autoFocus
+              />
+            </div>
+          </div>
+        )}
 
         {menuOpen && (
           <div className="md:hidden border-t bg-white">
-            <button className="block w-full text-left px-5 py-4 text-sm">Notes</button>
-            <button className="block w-full text-left px-5 py-4 text-sm">Shared</button>
+            <div className="px-4 py-3 border-b border-slate-200">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold text-sm shrink-0">
+                    {user?.name?.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-sm">{user?.name}</h3>
+                    <p className="text-xs text-slate-400">{user?.plan?.toUpperCase()} PLAN</p>
+                  </div>
+                </div>
+                {user?.plan !== 'pro' && (
+                  <button
+                    onClick={() => {
+                      handlePayment(user, refetchUser)
+                      setMenuOpen(false)
+                    }}
+                    className="bg-indigo-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg"
+                  >
+                    Go Pro
+                  </button>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                setActiveTab('notes')
+                setMenuOpen(false)
+              }}
+              className={`block w-full text-left px-5 py-4 text-sm font-medium ${activeTab === 'notes' ? 'bg-slate-100 text-slate-900' : 'text-slate-600'}`}
+            >
+              Notes
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab('shared')
+                setMenuOpen(false)
+              }}
+              className={`block w-full text-left px-5 py-4 text-sm font-medium ${activeTab === 'shared' ? 'bg-slate-100 text-slate-900' : 'text-slate-600'}`}
+            >
+              Shared
+            </button>
+            <button
+              onClick={() => {
+                setSearchOpen(true)
+                setMenuOpen(false)
+              }}
+              className="block w-full text-left px-5 py-4 text-sm font-medium text-slate-600"
+            >
+              Search notes
+            </button>
+            <button
+              onClick={() => {
+                setConfirmDialog({ type: 'logout' })
+                setMenuOpen(false)
+              }}
+              className="block w-full text-left px-5 py-4 text-sm font-medium text-slate-600"
+            >
+              Logout
+            </button>
           </div>
         )}
       </nav>
 
       {/* PAGE */}
-      <main className="max-w-7xl mx-auto px-6 py-10">
+      <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 sm:py-10">
 
         {/* Heading */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-5 mb-10">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-5 mb-8 sm:mb-10">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Welcome back, {user?.name?.split(' ')[0]}!</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Welcome back, {user?.name?.split(' ')[0]}!</h1>
             <p className="text-slate-500 mt-1 text-sm">Here's what you've been working on.</p>
           </div>
           <button
             onClick={handleCreateNote}
-            className="bg-slate-900 text-white px-5 py-3 rounded-2xl flex items-center gap-2 hover:bg-slate-800 transition text-sm font-medium"
+            className="w-full sm:w-auto bg-slate-900 text-white px-5 py-3 rounded-2xl flex items-center justify-center gap-2 hover:bg-slate-800 transition text-sm font-medium"
           >
             <Plus size={16} />
             New Note
@@ -172,7 +256,7 @@ function Dashboard() {
               </div>
             ))
           ) : filteredNotes.length === 0 ? (
-              <div className="col-span-4 text-center py-20 text-slate-400">
+              <div className="col-span-full text-center py-20 text-slate-400">
                 {activeTab === 'notes' ? (
                     <>
                         <p className="text-lg font-medium">No notes yet</p>

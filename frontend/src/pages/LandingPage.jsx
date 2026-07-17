@@ -1,25 +1,30 @@
 import { Zap, Sparkles, Search, Users, Check } from "lucide-react"
 import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "../features/auth/hooks/useAuth"
+import { usePayment } from "../features/notes/hooks/usePayment"
 
 function Navbar() {
   return (
     <header className="border-b border-slate-200/70 bg-white/90 backdrop-blur-sm sticky top-0 z-50">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-4">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center shrink-0">
             <Zap className="w-4 h-4 text-white" />
           </div>
           <span className="text-lg font-bold tracking-tight">ThinkForge</span>
         </div>
-        <nav className="hidden items-center gap-8 text-sm text-slate-600 md:flex">
+
+        <nav className="hidden items-center gap-6 text-sm text-slate-600 md:flex">
           <a href="#features" className="transition hover:text-slate-900">Features</a>
           <a href="#pricing" className="transition hover:text-slate-900">Pricing</a>
         </nav>
-        <div className="flex items-center gap-3">
-          <Link to="/login" className="rounded-full border border-slate-300 px-5 py-2 text-sm text-slate-700 transition hover:bg-slate-100">
+
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Link to="/login" className="rounded-full border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 sm:px-5">
             Login
           </Link>
-          <Link to="/register" className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">
+          <Link to="/register" className="rounded-full bg-slate-900 px-3 py-2 text-sm font-semibold text-white transition hover:bg-slate-700 sm:px-5">
             Sign Up
           </Link>
         </div>
@@ -29,25 +34,40 @@ function Navbar() {
 }
 
 export default function Landing() {
+  const navigate = useNavigate()
+  const { user } = useAuth()
+  const { handlePayment, loading: paymentLoading } = usePayment()
+
+  const handleGoPro = () => {
+      if (!user) {
+          navigate('/register')
+          return
+      }
+      if (user.plan === 'pro') {
+          navigate('/dashboard')
+          return
+      }
+      handlePayment(user, () => navigate('/dashboard'))
+  }
   return (
     <div className="bg-white text-slate-900">
       <Navbar />
 
       {/* HERO */}
-      <section className="min-h-screen flex items-center">
-        <div className="max-w-3xl mx-auto px-8 text-center">
+      <section className="min-h-screen flex items-center py-16 sm:py-20">
+        <div className="max-w-3xl mx-auto px-4 text-center sm:px-6 lg:px-8">
           <span className="inline-block text-blue-600 font-semibold text-sm mb-4 bg-blue-50 px-3 py-1 rounded-full">
             Now with GPT-4 Integration
           </span>
-          <h1 className="text-5xl md:text-6xl font-bold leading-tight">
+          <h1 className="text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
             Research faster.
             <br />
             <span className="text-blue-600">Write smarter.</span>
           </h1>
-          <p className="text-slate-500 mt-6 text-lg leading-relaxed max-w-xl mx-auto">
+          <p className="text-slate-500 mt-6 text-base leading-relaxed max-w-xl mx-auto sm:text-lg">
             The AI-powered note editor that brings the entire web into your writing space. Connect ideas, search instantly, and generate insights in real time.
           </p>
-          <div className="flex gap-4 mt-8 justify-center">
+          <div className="flex flex-col gap-3 mt-8 justify-center sm:flex-row">
             <Link to="/register" className="rounded-xl bg-slate-900 px-7 py-4 text-white text-sm font-semibold transition hover:bg-slate-700">
               Start Building for Free →
             </Link>
@@ -59,15 +79,15 @@ export default function Landing() {
       </section>
 
       {/* DEMO */}
-      <section id="demo" className="bg-slate-50 py-20">
-        <div className="max-w-5xl mx-auto px-8 text-center">
+      <section id="demo" className="bg-slate-50 py-16 sm:py-20">
+        <div className="max-w-5xl mx-auto px-4 text-center sm:px-6 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-widest text-blue-600 mb-3">Watch the demo</p>
-          <h2 className="text-3xl font-bold text-slate-900">See ThinkForge in action</h2>
+          <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">See ThinkForge in action</h2>
           <p className="mx-auto mt-4 max-w-xl text-slate-500 leading-7">
             A quick walkthrough of the AI workspace, note editor, and collaboration features.
           </p>
           <div className="mt-10 overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 shadow-xl">
-            <div className="aspect-video flex items-center justify-center text-slate-500">
+            <div className="aspect-video flex items-center justify-center text-slate-500 px-4">
               <p className="text-sm">Demo video coming soon</p>
             </div>
           </div>
@@ -75,14 +95,14 @@ export default function Landing() {
       </section>
 
       {/* FEATURES */}
-      <section id="features" className="max-w-7xl mx-auto py-24 px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold">Built for modern workflows</h2>
+      <section id="features" className="max-w-7xl mx-auto py-16 px-4 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+        <div className="text-center mb-10 sm:mb-16">
+          <h2 className="text-3xl font-bold sm:text-4xl">Built for modern workflows</h2>
           <p className="text-slate-500 mt-3">Everything you need to turn information into polished knowledge.</p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
-          <div className="rounded-2xl border border-slate-200 p-8 hover:shadow-md transition">
+          <div className="rounded-2xl border border-slate-200 p-6 hover:shadow-md transition sm:p-8">
             <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-6">
               <Sparkles className="w-5 h-5 text-blue-600" />
             </div>
@@ -90,7 +110,7 @@ export default function Landing() {
             <p className="text-slate-500 text-sm leading-6">Let AI help you draft summaries, rewrite content, and brainstorm ideas that match your style.</p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 p-8 hover:shadow-md transition">
+          <div className="rounded-2xl border border-slate-200 p-6 hover:shadow-md transition sm:p-8">
             <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-6">
               <Search className="w-5 h-5 text-blue-600" />
             </div>
@@ -98,7 +118,7 @@ export default function Landing() {
             <p className="text-slate-500 text-sm leading-6">Search the web without leaving your document. Drag and drop sources directly into your notes.</p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 p-8 hover:shadow-md transition">
+          <div className="rounded-2xl border border-slate-200 p-6 hover:shadow-md transition sm:p-8">
             <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-6">
               <Users className="w-5 h-5 text-blue-600" />
             </div>
@@ -109,10 +129,10 @@ export default function Landing() {
       </section>
 
       {/* PRICING */}
-      <section id="pricing" className="bg-slate-50 py-24 px-8">
+      <section id="pricing" className="bg-slate-50 py-16 px-4 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold">Simple, transparent pricing</h2>
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-3xl font-bold sm:text-4xl">Simple, transparent pricing</h2>
             <p className="text-slate-500 mt-3">Start free and upgrade as you grow.</p>
           </div>
 
@@ -131,8 +151,11 @@ export default function Landing() {
                   </li>
                 ))}
               </ul>
-              <button className="w-full mt-10 rounded-xl border border-slate-300 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
-                Current Plan
+              <button
+                  onClick={() => navigate(user ? '/dashboard' : '/register')}
+                  className="w-full mt-10 rounded-xl border border-slate-300 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
+              >
+                  {user ? 'Go to Dashboard' : 'Get Started Free'}
               </button>
             </div>
 
@@ -143,7 +166,7 @@ export default function Landing() {
               </span>
               <h3 className="text-sm font-semibold uppercase tracking-widest text-slate-500">Pro</h3>
               <div className="mt-4 text-4xl font-bold">
-                ₹999 <span className="text-lg text-slate-400 font-normal">/mo</span>
+                ₹99 <span className="text-lg text-slate-400 font-normal">/mo</span>
               </div>
               <ul className="mt-8 space-y-3">
                 {['Unlimited AI queries', 'Advanced GPT-4 assistance', 'Full web search integration', 'Export to PDF & Markdown', 'Real-time collaboration', 'Priority support'].map(item => (
@@ -153,9 +176,13 @@ export default function Landing() {
                   </li>
                 ))}
               </ul>
-              <button className="w-full mt-10 rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white hover:bg-slate-700 transition">
-                Go Pro
-              </button>
+              <button
+                onClick={handleGoPro}
+                disabled={paymentLoading}
+                className="w-full mt-10 rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white hover:bg-slate-700 transition disabled:opacity-50"
+              >
+                {paymentLoading ? 'Processing...' : user?.plan === 'pro' ? 'Go to Dashboard' : 'Go Pro'}
+             </button>
             </div>
           </div>
         </div>
@@ -163,7 +190,7 @@ export default function Landing() {
 
       {/* FOOTER */}
       <footer id="footer" className="border-t bg-white py-8">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-8 md:flex-row">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 sm:px-6 md:flex-row lg:px-8">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-slate-900 flex items-center justify-center">
               <Zap className="w-3 h-3 text-white" />

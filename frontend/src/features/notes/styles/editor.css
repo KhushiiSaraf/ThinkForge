@@ -9,14 +9,32 @@
 .tiptap strong { font-weight: 700; }
 .tiptap em { font-style: italic; }
 /* Give the editor a visible area with border */
-.tiptap {
-    min-height: 70vh;
-    padding: 1.5rem;
+.tiptap,
+.ProseMirror {
+    min-height: 50vh;
+    padding: 1rem;
     border: 1.5px solid #e2e8f0;
     border-radius: 12px;
     background: white;
     outline: none;
     cursor: text;
+    overflow-wrap: anywhere;
+}
+
+@media (min-width: 640px) {
+    .tiptap,
+    .ProseMirror {
+        min-height: 60vh;
+        padding: 1.25rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .tiptap,
+    .ProseMirror {
+        min-height: 70vh;
+        padding: 1.5rem;
+    }
 }
 
 /* Highlight border when focused */
