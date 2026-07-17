@@ -17,7 +17,7 @@ function formatDate(dateStr) {
   })
 }
 
-function NoteCard({ note, onDelete }) {
+function NoteCard({ note, onDelete, onShare, currentUserId }) {
   const navigate = useNavigate()
 
   return (
@@ -33,6 +33,12 @@ function NoteCard({ note, onDelete }) {
         <p className="text-sm text-slate-400 leading-6 line-clamp-3">
           {getPreview(note.content)}
         </p>
+        {/* Shared indicator */}
+        {String(note.owner?._id) !== String(currentUserId) && note.owner?.name && (
+            <p className="text-xs text-indigo-500 font-medium">
+                Shared by {note.owner?.name}
+            </p>
+        )}
       </div>
 
       {/* Footer */}
@@ -42,12 +48,15 @@ function NoteCard({ note, onDelete }) {
           {formatDate(note.createdAt)}
         </div>
         <div className="flex items-center gap-1">
-          <button
-            onClick={(e) => e.stopPropagation()}
+        <button
+            onClick={(e) => {
+                e.stopPropagation()
+                onShare(note._id)
+            }}
             className="p-2 rounded-lg hover:bg-slate-100 transition"
-          >
+        >
             <Share2 size={15} className="text-slate-400" />
-          </button>
+        </button>
           <button
             onClick={(e) => {
               e.stopPropagation()

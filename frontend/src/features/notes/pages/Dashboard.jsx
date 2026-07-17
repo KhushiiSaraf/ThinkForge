@@ -5,6 +5,7 @@ import { useNotes } from "../hooks/useNotes";
 import { useAuth } from "../../auth/hooks/useAuth";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { usePayment } from "../hooks/usePayment";
+import ShareModal from "../components/ShareModal";
 
 function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,6 +15,14 @@ function Dashboard() {
 
   // Confirm dialog state
   const [confirmDialog, setConfirmDialog] = useState(null)
+
+  //Share modal state
+  const [activeTab, setActiveTab] = useState('notes')
+  const [shareModalNoteId, setShareModalNoteId] = useState(null)
+  //Filter notes based on active tab
+  const filteredNotes = activeTab === 'notes'
+    ? notes.filter(note => String(note.owner?._id) === String(user?.id))
+    : notes.filter(note => String(note.owner?._id) !== String(user?.id))
 
   const handleConfirm = async () => {
     if (confirmDialog?.type === 'delete') {
@@ -46,8 +55,18 @@ function Dashboard() {
             </div>
 
             <div className="hidden md:flex gap-1">
-              <button className="px-4 py-2 rounded-lg bg-slate-100 font-medium text-sm">Notes</button>
-              <button className="px-4 py-2 rounded-lg hover:bg-slate-100 text-sm text-slate-600">Shared</button>
+              <button
+                onClick={() => setActiveTab('notes')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'notes' ? 'bg-slate-100' : 'hover:bg-slate-100 text-slate-600'}`}
+            >
+                Notes
+            </button>
+            <button
+                onClick={() => setActiveTab('shared')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'shared' ? 'bg-slate-100' : 'hover:bg-slate-100 text-slate-600'}`}
+            >
+                Shared
+            </button>
             </div>
           </div>
 
@@ -125,20 +144,28 @@ function Dashboard() {
                 <div className="h-3 bg-slate-100 rounded w-5/6" />
               </div>
             ))
-          ) : notes.length === 0 ? (
-            <div className="col-span-4 text-center py-20 text-slate-400">
-              <p className="text-lg font-medium">No notes yet</p>
-              <p className="text-sm mt-1">Click "New Note" to get started</p>
+          ) : filteredNotes.length === 0 ? (
+              <div className="col-span-4 text-center py-20 text-slate-400">
+                {activeTab === 'notes' ? (
+                    <>
+                        <p className="text-lg font-medium">No notes yet</p>
+                        <p className="text-sm mt-1">Click "New Note" to get started</p>
+                    </>
+                ) : (
+                    <>
+                        <p className="text-lg font-medium">No shared notes</p>
+                        <p className="text-sm mt-1">Notes shared with you will appear here</p>
+                    </>
+                )}
             </div>
           ) : (
-            notes.map((note) => (
+            filteredNotes.map((note) => (
               <NoteCard
                   key={note._id}
                   note={note}
-                  onDelete={() => setConfirmDialog({
-                      type: 'delete',
-                      noteId: note._id
-                  })}
+                  currentUserId={user?.id}
+                  onDelete={() => setConfirmDialog({ type: 'delete', noteId: note._id })}
+                  onShare={(id) => setShareModalNoteId(id)}
               />
           ))
           )}
@@ -157,6 +184,12 @@ function Dashboard() {
         onCancel={() => setConfirmDialog(null)}
     />
     )}
+    {shareModalNoteId && (
+    <ShareModal
+        noteId={shareModalNoteId}
+        onClose={() => setShareModalNoteId(null)}
+    />
+      )}
     </div>
   );
 }

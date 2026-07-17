@@ -7,6 +7,7 @@ const {
   getNoteController,
   updateNoteController,
   deleteNoteController,
+  shareNoteController,
 } = require('../controllers/notes.controller');
 
 const { authMiddleware } = require('../middleware/auth.middleware');
@@ -45,5 +46,12 @@ notesRouter.put('/:id', authMiddleware, updateNoteController);
  * @access Private
  */
 notesRouter.delete('/:id', authMiddleware, deleteNoteController);
+
+/** * @route POST /api/notes/:id/share
+ * @desc Share a note with another user
+ * @access Private
+ */
+notesRouter.post('/:id/share', authMiddleware, shareNoteController);
+
 
 module.exports = notesRouter;

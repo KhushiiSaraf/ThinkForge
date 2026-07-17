@@ -1,4 +1,5 @@
 const noteModel = require('../models/notes.model');
+const userModel = require('../models/user.model');
 
 function getUserId(req) {
   return req.user?._id || req.user?.id;
@@ -53,7 +54,7 @@ async function getNotesController(req, res) {
   try {
     const notes = await noteModel.find({
       $or: [{ owner: userId }, { collaborators: userId }],
-    }).sort({ updatedAt: -1 });
+    }).populate('owner', 'name email').sort({ updatedAt: -1 });
 
     res.status(200).json({ notes });
   } catch (error) {
@@ -73,7 +74,7 @@ async function getNoteController(req, res) {
   const noteId = req.params.id;
 
   try {
-    const note = await noteModel.findById(noteId);
+    const note = await noteModel.findById(noteId).populate('owner', 'name email');
 
     if (!note) {
       return res.status(404).json({ message: 'Note not found' });
@@ -159,10 +160,71 @@ async function deleteNoteController(req, res) {
   }
 }
 
+/**
+ * @name shareNoteController
+ * @route POST /api/notes/:id/share
+ * @desc Add a collaborator to a note by email
+ * @access Private
+ */
+async function shareNoteController(req, res) {
+    const userId = getUserId(req);
+    const noteId = req.params.id;
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ message: 'Email is required' })
+    }
+
+    try {
+        const note = await noteModel.findById(noteId);
+
+        if (!note) {
+            return res.status(404).json({ message: 'Note not found' })
+        }
+
+        // check if owner is pro
+        const owner = await userModel.findById(userId)
+        if (owner.plan !== 'pro') {
+            return res.status(403).json({ message: 'Sharing is a Pro feature. Please upgrade to Pro.' })
+        }
+
+        // only owner can share
+        if (!note.owner.equals(userId)) {
+            return res.status(403).json({ message: 'Only the note owner can share this note' })
+        }
+
+        // find the user by email
+        const collaborator = await userModel.findOne({ email })
+
+        if (!collaborator) {
+            return res.status(404).json({ message: 'No user found with this email' })
+        }
+
+        // check if already a collaborator
+        if (note.collaborators.some(c => c.equals(collaborator._id))) {
+            return res.status(400).json({ message: 'User is already a collaborator' })
+        }
+
+        // check if trying to share with yourself
+        if (collaborator._id.equals(userId)) {
+            return res.status(400).json({ message: 'You cannot share a note with yourself' })
+        }
+
+        note.collaborators.push(collaborator._id)
+        await note.save({ validateModifiedOnly: true })
+
+        res.status(200).json({ message: `Note shared with ${collaborator.name}` })
+    } catch (error) {
+        console.error('Error in shareNoteController:', error)
+        res.status(500).json({ message: 'Internal server error' })
+    }
+}
+
 module.exports = {
-  createNoteController,
-  getNotesController,
-  getNoteController,
-  updateNoteController,
-  deleteNoteController,
-};
+    createNoteController,
+    getNotesController,
+    getNoteController,
+    updateNoteController,
+    deleteNoteController,
+    shareNoteController,
+}

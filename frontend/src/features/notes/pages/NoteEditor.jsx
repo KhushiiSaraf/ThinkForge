@@ -26,6 +26,7 @@ import { marked } from 'marked'
 import '../styles/editor.css'
 import { useSocket } from '../hooks/useSocket'
 import { useAuth } from '../../auth/hooks/useAuth'
+import ShareModal from '../components/ShareModal'
 
 function Toolbar({ editor, onDiagramClick }) {
   if (!editor) return null
@@ -118,6 +119,12 @@ export default function NoteEditor() {
   //Diagram state
   const [diagramModalOpen, setDiagramModalOpen] = useState(false)
 
+  // Share modal state
+  const [shareModalOpen, setShareModalOpen] = useState(false)
+
+  // Note Owner check
+  const [isSharedNote, setIsSharedNote] = useState(false)
+  const [noteOwner, setNoteOwner] = useState(null)
   
   const editor = useEditor({
     extensions: [
@@ -175,6 +182,13 @@ export default function NoteEditor() {
         editor.commands.setContent(currentNote.content)
       }
       setSaved(true)
+
+      // check if this is a shared note
+      const ownerId = currentNote.owner?._id || currentNote.owner
+      if (String(ownerId) !== String(user?.id)) {
+        setIsSharedNote(true)
+        setNoteOwner(currentNote.owner?.name)
+      }
     }
   }, [currentNote, editor])
 
@@ -265,12 +279,21 @@ export default function NoteEditor() {
   return (
     <div className="min-h-screen bg-slate-50">
         <EditorTopBar
-            title={title}
-            setTitle={handleTitleChange}
-            saving={saving}
-            saved={saved}
-            onSave={handleSave}
+          title={title}
+          setTitle={handleTitleChange}
+          saving={saving}
+          saved={saved}
+          onSave={handleSave}
+          onShareClick={() => setShareModalOpen(true)}
         />
+
+        {isSharedNote && noteOwner && (
+            <div className="bg-indigo-50 border-b border-indigo-100 px-6 py-2">
+                <span className="text-xs text-indigo-600 font-medium">
+                    Shared document — originally created by {noteOwner}
+                </span>
+            </div>
+        )}
 
         <div className="flex">
             {/* Editor area */}
@@ -301,6 +324,13 @@ export default function NoteEditor() {
                 onInsert={handleInsertDiagram}
                 onGenerate={handleGenerateDiagram}
                 loading={aiLoading}
+            />
+        )}
+
+        {shareModalOpen && (
+            <ShareModal
+                noteId={id}
+                onClose={() => setShareModalOpen(false)}
             />
         )}
      </div>
