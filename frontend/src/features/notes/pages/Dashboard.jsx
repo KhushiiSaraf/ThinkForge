@@ -6,6 +6,7 @@ import { useAuth } from "../../auth/hooks/useAuth";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { usePayment } from "../hooks/usePayment";
 import ShareModal from "../components/ShareModal";
+import { getPreview } from '../utils/noteUtils';
 
 function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -19,10 +20,23 @@ function Dashboard() {
   //Share modal state
   const [activeTab, setActiveTab] = useState('notes')
   const [shareModalNoteId, setShareModalNoteId] = useState(null)
+
+  // Search state
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchOpen, setSearchOpen] = useState(false)
+
   //Filter notes based on active tab
-  const filteredNotes = activeTab === 'notes'
-    ? notes.filter(note => String(note.owner?._id) === String(user?.id))
-    : notes.filter(note => String(note.owner?._id) !== String(user?.id))
+  const filteredNotes = notes
+    .filter(note => activeTab === 'notes'
+        ? String(note.owner?._id) === String(user?.id)
+        : String(note.owner?._id) !== String(user?.id)
+    )
+    .filter(note => {
+        if (!searchQuery.trim()) return true
+        const title = note.title?.toLowerCase() || ''
+        const preview = getPreview(note.content)?.toLowerCase() || ''
+        return title.includes(searchQuery.toLowerCase()) || preview.includes(searchQuery.toLowerCase())
+    })
 
   const handleConfirm = async () => {
     if (confirmDialog?.type === 'delete') {
@@ -37,6 +51,16 @@ function Dashboard() {
   useEffect(() => {
     handleGetAllNotes()
   }, [])
+
+  useEffect(() => {
+    const handleClick = (e) => {
+        if (!e.target.closest('.search-container')) {
+            setSearchOpen(false)
+        }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+}, [])  
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -71,13 +95,16 @@ function Dashboard() {
           </div>
 
           {/* Right */}
-          <div className="hidden md:flex items-center gap-4">
-            <button className="p-2 rounded-lg hover:bg-slate-100">
-              <Search size={18} className="text-slate-600" />
-            </button>
-            <button className="p-2 rounded-lg hover:bg-slate-100">
-              <Bell size={18} className="text-slate-600" />
-            </button>
+          <div className="hidden md:flex items-center gap-4 search-container relative">
+            <div className="flex items-center gap-2 bg-slate-100 rounded-xl px-3 py-2 w-56">
+              <Search size={15} className="text-slate-400 shrink-0" />
+              <input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search notes..."
+                  className="bg-transparent text-sm outline-none w-full text-slate-700 placeholder:text-slate-400"
+              />
+          </div>
             <div className="h-6 w-px bg-slate-200" />
             <div className="flex items-center gap-3">
               <div className="text-right">
