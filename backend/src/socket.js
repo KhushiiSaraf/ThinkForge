@@ -1,4 +1,7 @@
+// backend/src/socket.js
 const { Server } = require('socket.io');
+const { createAdapter } = require('@socket.io/redis-adapter');
+const IORedis = require('ioredis');
 
 let io;
 
@@ -10,22 +13,23 @@ function initSocket(server) {
         }
     });
 
+    // Redis adapter needs two connections: one for publishing, one for subscribing
+    const pubClient = new IORedis(process.env.REDIS_URL);
+    const subClient = pubClient.duplicate();
+    io.adapter(createAdapter(pubClient, subClient));
+
     io.on('connection', (socket) => {
         console.log('User connected:', socket.id);
 
-        // user joins a note's room
         socket.on('join-note', (noteId) => {
             socket.join(noteId);
             console.log(`Socket ${socket.id} joined note ${noteId}`);
         });
 
-        // user sends content update
         socket.on('note-update', ({ noteId, content }) => {
-            // broadcast to everyone in the room EXCEPT the sender
             socket.to(noteId).emit('note-updated', { content });
         });
 
-        // user leaves the note
         socket.on('leave-note', (noteId) => {
             socket.leave(noteId);
             console.log(`Socket ${socket.id} left note ${noteId}`);

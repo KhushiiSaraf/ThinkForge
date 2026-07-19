@@ -19,6 +19,7 @@ const notesRouter = require('./routes/notes.routes');
 const aiRouter = require('./routes/ai.routes');
 const searchRouter = require('./routes/search.routes');
 const paymentRouter = require('./routes/payment.routes');
+const ragRoutes = require('./routes/rag.routes');
 
 // use all routes
 app.use('/api/auth', authRouter);
@@ -26,6 +27,7 @@ app.use('/api/notes', notesRouter);
 app.use('/api/ai', aiRouter);
 app.use('/api/search', searchRouter);
 app.use('/api/payment', paymentRouter);
+app.use('/api/rag', ragRoutes)
 app.get('/api/health', (req, res) => {
     res.status(200).json({
         status: 'ok'

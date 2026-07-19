@@ -1,33 +1,34 @@
 const jwt = require('jsonwebtoken');
 const blacklistTokenModel = require('../models/user.blacklistToken');
+const User = require('../models/user.model');
 
-/** * @name authMiddleware
- * @desc Middleware to protect routes by verifying JWT token in cookies
- * @access Private
- * Checks if the token is present in cookies, verifies it, and checks if it's blacklisted. If valid, attaches user info to req.user and calls next(). Otherwise, returns 401 Unauthorized.
-*/ 
-
-async function authMiddleware(req,res,next){
+async function authMiddleware(req, res, next) {
     const token = req.cookies.token;
 
-    if(!token){
-        return res.status(401).json({message: "Unauthorized: No token provided"});
+    if (!token) {
+        return res.status(401).json({ message: "Unauthorized: No token provided" });
     }
-    try{
-        // check if token is blacklisted
+    try {
         const blacklistedToken = await blacklistTokenModel.findOne({ token });
-        if(blacklistedToken){
-            return res.status(401).json({message: "Unauthorized: Token is invalid"});
+        if (blacklistedToken) {
+            return res.status(401).json({ message: "Unauthorized: Token is invalid" });
         }
-        // verify token
+
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = { ...decoded, _id: decoded.id };
+
+        // fetch the live user from DB instead of trusting stale token data
+        const user = await User.findById(decoded.id).select('-password');
+        if (!user) {
+            return res.status(401).json({ message: "Unauthorized: User no longer exists" });
+        }
+
+        req.user = user;
         next();
     }
     catch (error) {
         console.error("Error in authMiddleware:", error);
-        return res.status(401).json({message: "Unauthorized: Invalid token"});
+        return res.status(401).json({ message: "Unauthorized: Invalid token" });
     }
 }
 
-module.exports = {authMiddleware};
+module.exports = { authMiddleware };
