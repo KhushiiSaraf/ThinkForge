@@ -101,5 +101,22 @@ const getPdfStatus = async (req, res) => {
   res.json({ status: pdfDoc.status, chunkCount: pdfDoc.chunkCount, fileName: pdfDoc.fileName });
 };
 
-module.exports = { uploadPdf, uploadMiddleware: upload.single('pdf'), askQuestion, getPdfStatus };
+const getPdfForNote = async (req, res) => {
+  const { noteId } = req.params;
+  const pdfDoc = await PdfDocument.findOne({ note: noteId, owner: req.user._id }).sort({ createdAt: -1 });
+
+  if (!pdfDoc) {
+    return res.json({ exists: false });
+  }
+
+  res.json({
+    exists: true,
+    status: pdfDoc.status,
+    fileName: pdfDoc.fileName,
+    chunkCount: pdfDoc.chunkCount,
+    pdfDocumentId: pdfDoc._id,
+  });
+};
+
+module.exports = { uploadPdf, uploadMiddleware: upload.single('pdf'), askQuestion, getPdfStatus, getPdfForNote };
 

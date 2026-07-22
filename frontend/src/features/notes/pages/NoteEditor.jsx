@@ -27,6 +27,7 @@ import '../styles/editor.css'
 import { useSocket } from '../hooks/useSocket'
 import { useAuth } from '../../auth/hooks/useAuth'
 import ShareModal from '../components/ShareModal'
+import { usePdfRag } from '../hooks/usePdfRag'
 
 function Toolbar({ editor, onDiagramClick }) {
   if (!editor) return null
@@ -125,7 +126,7 @@ export default function NoteEditor() {
   // Note Owner check
   const [isSharedNote, setIsSharedNote] = useState(false)
   const [noteOwner, setNoteOwner] = useState(null)
-  
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
@@ -165,10 +166,17 @@ export default function NoteEditor() {
       }   
     }
   })
-  
-  // Socket for real-time collaboration
+  //Pdf
+  const {
+    pdfStatus, fileName, chunkCount, checkingExisting,
+    uploading, asking, answer, sources,
+    handleUploadPdf, handleAskQuestion, handlePdfStatusUpdate, clearAnswer,
+  } = usePdfRag(id)
+
   const { user } = useAuth()
-  const { emitUpdate } = useSocket(id, user, editor)
+  const { emitUpdate } = useSocket(id, user, editor, { onPdfStatus: handlePdfStatusUpdate })
+  
+  
   // Load note on mount
   useEffect(() => {
     if (id) handleGetNote(id)
@@ -266,7 +274,14 @@ export default function NoteEditor() {
         }
     }
 
-  //Watches editor changes:
+    //PDF
+    const handleInsertPdfAnswer = (answerText) => {
+      if (editor) {
+        editor.chain().focus().insertContent(`<p>${answerText}</p>`).run()
+        setSaved(false)
+      }
+    }
+    //Watches editor changes:
   useEffect(() => {
     if (!editor) return
     const handler = () => {
@@ -275,6 +290,8 @@ export default function NoteEditor() {
     editor.on('update', handler)
     return () => editor.off('update', handler)
   }, [editor, emitUpdate])
+
+
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -320,7 +337,21 @@ export default function NoteEditor() {
             aiLoading={aiLoading}
         />
 
-        <AIGenerateBar onGenerate={handleAIGenerate} loading={aiLoading} />
+        <AIGenerateBar
+          onGenerate={handleAIGenerate}
+          loading={aiLoading}
+          isPro={user?.plan === 'pro'}
+          pdfStatus={pdfStatus}
+          fileName={fileName}
+          checkingExisting={checkingExisting}
+          uploading={uploading}
+          asking={asking}
+          answer={answer}
+          onUploadPdf={handleUploadPdf}
+          onAskPdf={handleAskQuestion}
+          onInsertAnswer={handleInsertPdfAnswer}
+          onDismissAnswer={clearAnswer} 
+        />
 
         {diagramModalOpen && (
             <DiagramModal
