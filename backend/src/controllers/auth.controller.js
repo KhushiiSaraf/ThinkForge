@@ -3,6 +3,9 @@ const blacklistTokenModel = require('../models/user.blacklistToken');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { registerSchema, loginSchema } = require("../validator/auth.validator");
+const { generateOtp, storeOtp, verifyOtp, isOnCooldown, setCooldown } = require('../services/otp.service');
+const { sendOtpEmail } = require('../services/email.service');
+
 
 /**
  * @name registerUserController
@@ -48,6 +51,21 @@ async function registerUserController(req, res) {
             password: hashedPassword
         })
         await newUser.save();
+
+        // fire off the verification email — don't let a failure here break registration
+        try {
+            const otp = generateOtp();
+            await storeOtp(newUser._id, otp);
+            await sendOtpEmail(newUser.email, otp);
+        } catch (emailErr) {
+            console.error('Failed to send verification OTP:', emailErr);
+            // intentionally not returning an error response — registration itself succeeded
+        }
+
+        res.status(201).json({
+            message: "User registered successfully",
+            user: { id: newUser._id, name: newUser.name, email: newUser.email }
+        });
 
         res.status(201).json({
             message: "User registered successfully",
@@ -165,14 +183,77 @@ async function getMeController(req, res) {
             id: user._id,
             name: user.name,
             email: user.email,
-            plan: user.plan
+            plan: user.plan,
+            isEmailVerified: user.isEmailVerified,
         }
     });
+}
+
+/**
+ * @name sendOtpController
+ * @route POST /api/auth/send-otp
+ * @desc Resend a verification OTP to the logged-in user's email
+ * @access Private
+ */
+async function sendOtpController(req, res) {
+    try {
+        const user = await userModel.findById(req.user._id);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        if (user.isEmailVerified) {
+            return res.status(400).json({ message: "Email is already verified" });
+        }
+
+        const onCooldown = await isOnCooldown(user._id);
+        if (onCooldown) {
+            return res.status(429).json({ message: "Please wait before requesting another code" });
+        }
+
+        const otp = generateOtp();
+        await storeOtp(user._id, otp);
+        await setCooldown(user._id);
+        await sendOtpEmail(user.email, otp);
+
+        res.status(200).json({ message: "Verification code sent" });
+    } catch (error) {
+        console.error("Error in sendOtpController:", error);
+        res.status(500).json({ message: "Failed to send verification code" });
+    }
+}
+
+/**
+ * @name verifyOtpController
+ * @route POST /api/auth/verify-otp
+ * @desc Verify the OTP and mark the user's email as verified
+ * @access Private
+ */
+async function verifyOtpController(req, res) {
+    try {
+        const { otp } = req.body;
+        if (!otp) return res.status(400).json({ message: "OTP is required" });
+
+        const result = await verifyOtp(req.user._id, otp);
+        if (!result.valid) {
+            const message = result.reason === 'expired'
+                ? "Code expired — request a new one"
+                : "Incorrect code";
+            return res.status(400).json({ message });
+        }
+
+        await userModel.findByIdAndUpdate(req.user._id, { isEmailVerified: true });
+
+        res.status(200).json({ message: "Email verified successfully" });
+    } catch (error) {
+        console.error("Error in verifyOtpController:", error);
+        res.status(500).json({ message: "Verification failed" });
+    }
 }
 
 module.exports = {
     registerUserController,
     loginUserController,
     logoutUserController,
-    getMeController
+    getMeController,
+    sendOtpController,
+    verifyOtpController,
 };

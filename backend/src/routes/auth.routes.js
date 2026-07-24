@@ -1,7 +1,7 @@
 const express = require('express');
 const authRouter = express.Router();
 
-const {registerUserController, loginUserController, logoutUserController, getMeController} = require('../controllers/auth.controller');
+const {registerUserController, loginUserController, logoutUserController, getMeController, sendOtpController, verifyOtpController} = require('../controllers/auth.controller');
 
 const {authMiddleware} = require('../middleware/auth.middleware');
 
@@ -32,5 +32,8 @@ authRouter.post('/logout', authMiddleware, logoutUserController);
  * @access Private
  */
 authRouter.get('/get-me', authMiddleware, getMeController);
+
+authRouter.post('/send-otp', authMiddleware, sendOtpController);
+authRouter.post('/verify-otp', authMiddleware, verifyOtpController);
 
 module.exports = authRouter;
