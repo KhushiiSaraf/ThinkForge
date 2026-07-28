@@ -7,6 +7,7 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import { usePayment } from "../hooks/usePayment";
 import ShareModal from "../components/ShareModal";
 import { getPreview } from '../utils/noteUtils';
+import ThemeToggle from "../../theme/ThemeToggle";
 
 function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -63,10 +64,9 @@ function Dashboard() {
 }, [])  
 
   return (
-    <div className="min-h-screen bg-slate-50">
-
+  <div className="min-h-screen bg-slate-50 text-slate-900 dark:text-white transition-colors duration-300 dark:bg-slate-950 ">
       {/* NAVBAR */}
-      <nav className="bg-white/95 backdrop-blur border-b border-slate-200 sticky top-0 z-50">
+      <nav className="bg-white/95 dark:bg-slate-900/95 border-slate-200 dark:border-slate-800 backdrop-blur border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto h-16 px-4 sm:px-6 flex items-center justify-between">
           {/* Left — Logo + Nav */}
           <div className="flex items-center gap-3 sm:gap-8 min-w-0">
@@ -80,14 +80,14 @@ function Dashboard() {
             <div className="hidden md:flex gap-1">
               <button
                 onClick={() => setActiveTab('notes')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'notes' ? 'bg-slate-100 text-slate-900' : 'hover:bg-slate-100 text-slate-600'}`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'notes' ? 'bg-slate-100 text-slate-900 dark:text-white' : 'hover:bg-slate-100 text-slate-600 dark:text-slate-300'}`}
               >
                 Notes
               </button>
               <button
                 onClick={() => setActiveTab('shared')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'shared' ? 'bg-slate-100 text-slate-900' : 'hover:bg-slate-100 text-slate-600'}`}
-              >
+                className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'shared' ? 'bg-slate-100 text-slate-900 dark:text-white' : 'hover:bg-slate-100 dark:hover:bg-slate-800  text-slate-600 dark:text-slate-300'}`}
+              > 
                 Shared
               </button>
             </div>
@@ -95,20 +95,21 @@ function Dashboard() {
 
           {/* Desktop actions */}
           <div className="hidden md:flex items-center gap-4 search-container relative">
-            <div className="flex items-center gap-2 bg-slate-100 rounded-xl px-3 py-2 w-56">
-              <Search size={15} className="text-slate-400 shrink-0" />
+            <div className="flex items-center gap-2 bg-slate-100
+dark:bg-slate-800 rounded-xl px-3 py-2 w-56">
+              <Search size={15} className="text-slate-400 dark:text-slate-500 shrink-0" />
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search notes..."
-                className="bg-transparent text-sm outline-none w-full text-slate-700 placeholder:text-slate-400"
+                className="bg-transparent text-sm outline-none w-full text-slate-700 dark:text-white placeholder:text-slate-400dark:placeholder:text-slate-500"
               />
             </div>
-            <div className="h-6 w-px bg-slate-200" />
+            <div className="h-6 w-px bg-slate-200 dark:bg-slate-700" />
             <div className="flex items-center gap-3">
               <div className="text-right">
                 <h3 className="font-semibold text-sm">{user?.name}</h3>
-                <p className="text-xs text-slate-400">{user?.plan?.toUpperCase()} PLAN</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500">{user?.plan?.toUpperCase()} PLAN</p>
               </div>
               <div className="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold text-sm shrink-0">
                 {user?.name?.charAt(0).toUpperCase()}
@@ -123,8 +124,9 @@ function Dashboard() {
                 Go Pro
               </button>
             )}
-            <button onClick={() => setConfirmDialog({ type: 'logout' })} className="p-2 rounded-lg hover:bg-slate-100">
-              <LogOut size={18} className="text-slate-600" />
+            <ThemeToggle />
+            <button onClick={() => setConfirmDialog({ type: 'logout' })} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+              <LogOut size={18} className="text-slate-600 dark:text-slate-300" />
             </button>
           </div>
 
@@ -135,12 +137,12 @@ function Dashboard() {
                 setSearchOpen((prev) => !prev)
                 setMenuOpen(false)
               }}
-              className="p-2 rounded-lg hover:bg-slate-100"
+              className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
             >
-              <Search size={18} className="text-slate-600" />
+              <Search size={18} className="text-slate-600 dark:text-slate-300" />
             </button>
-            <button onClick={() => setMenuOpen(!menuOpen)} className="p-2 rounded-lg hover:bg-slate-100">
-              {menuOpen ? <X size={18} className="text-slate-600" /> : <Menu size={18} className="text-slate-600" />}
+            <button onClick={() => setMenuOpen(!menuOpen)} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+              {menuOpen ? <X size={18} className="text-slate-600 dark:text-slate-300" /> : <Menu size={18} className="text-slate-600 dark:text-slate-300" />}
             </button>
           </div>
         </div>
@@ -148,12 +150,12 @@ function Dashboard() {
         {searchOpen && (
           <div className="md:hidden border-t border-slate-200 bg-white px-4 py-3">
             <div className="flex items-center gap-2 bg-slate-100 rounded-xl px-3 py-2 search-container">
-              <Search size={15} className="text-slate-400 shrink-0" />
+              <Search size={15} className="text-slate-400 dark:text-slate-500 shrink-0" />
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search notes..."
-                className="bg-transparent text-sm outline-none w-full text-slate-700 placeholder:text-slate-400"
+                className="bg-transparent text-sm outline-none w-full text-slate-700 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 autoFocus
               />
             </div>
@@ -162,7 +164,7 @@ function Dashboard() {
 
         {menuOpen && (
           <div className="md:hidden border-t bg-white">
-            <div className="px-4 py-3 border-b border-slate-200">
+            <div className="px-4 py-3 border-b bg-slate-200 dark:bg-slate-700">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold text-sm shrink-0">
@@ -170,7 +172,7 @@ function Dashboard() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-sm">{user?.name}</h3>
-                    <p className="text-xs text-slate-400">{user?.plan?.toUpperCase()} PLAN</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500">{user?.plan?.toUpperCase()} PLAN</p>
                   </div>
                 </div>
                 {user?.plan !== 'pro' && (
@@ -191,7 +193,7 @@ function Dashboard() {
                 setActiveTab('notes')
                 setMenuOpen(false)
               }}
-              className={`block w-full text-left px-5 py-4 text-sm font-medium ${activeTab === 'notes' ? 'bg-slate-100 text-slate-900' : 'text-slate-600'}`}
+              className={`block w-full text-left px-5 py-4 text-sm font-medium ${activeTab === 'notes' ? 'bg-slate-100 text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'}`}
             >
               Notes
             </button>
@@ -200,7 +202,7 @@ function Dashboard() {
                 setActiveTab('shared')
                 setMenuOpen(false)
               }}
-              className={`block w-full text-left px-5 py-4 text-sm font-medium ${activeTab === 'shared' ? 'bg-slate-100 text-slate-900' : 'text-slate-600'}`}
+              className={`block w-full text-left px-5 py-4 text-sm font-medium ${activeTab === 'shared' ? 'bg-slate-100 text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'}`}
             >
               Shared
             </button>
@@ -209,7 +211,7 @@ function Dashboard() {
                 setSearchOpen(true)
                 setMenuOpen(false)
               }}
-              className="block w-full text-left px-5 py-4 text-sm font-medium text-slate-600"
+              className="block w-full text-left px-5 py-4 text-sm font-medium text-slate-600 dark:text-slate-300"
             >
               Search notes
             </button>
@@ -218,7 +220,7 @@ function Dashboard() {
                 setConfirmDialog({ type: 'logout' })
                 setMenuOpen(false)
               }}
-              className="block w-full text-left px-5 py-4 text-sm font-medium text-slate-600"
+              className="block w-full text-left px-5 py-4 text-sm font-medium text-slate-600 dark:text-slate-300"
             >
               Logout
             </button>
@@ -232,8 +234,8 @@ function Dashboard() {
         {/* Heading */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-5 mb-8 sm:mb-10">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Welcome back, {user?.name?.split(' ')[0]}!</h1>
-            <p className="text-slate-500 mt-1 text-sm">Here's what you've been working on.</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-gray-400">Welcome back, {user?.name?.split(' ')[0]}!</h1>
+            <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm">Here's what you've been working on.</p>
           </div>
           <button
             onClick={handleCreateNote}
@@ -248,15 +250,15 @@ function Dashboard() {
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {loading ? (
             Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-slate-200 p-5 h-56 animate-pulse">
-                <div className="h-3 bg-slate-200 rounded w-1/4 mb-4" />
-                <div className="h-5 bg-slate-200 rounded w-3/4 mb-3" />
-                <div className="h-3 bg-slate-100 rounded w-full mb-2" />
-                <div className="h-3 bg-slate-100 rounded w-5/6" />
+              <div key={i} className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-2xl borderp-5 h-56 animate-pulse">
+                <div className="h-3 bg-slate-200 dark:bg-slate-700  rounded w-1/4 mb-4" />
+                <div className="h-5 bg-slate-200 dark:bg-slate-700  rounded w-3/4 mb-3" />
+                <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-full mb-2" />
+                <div className="h-3 bg-slate-200 dark:bg-slate-700  rounded w-5/6" />
               </div>
             ))
           ) : filteredNotes.length === 0 ? (
-              <div className="col-span-full text-center py-20 text-slate-400">
+              <div className="col-span-full text-center py-20 text-slate-400 dark:text-slate-500">
                 {activeTab === 'notes' ? (
                     <>
                         <p className="text-lg font-medium">No notes yet</p>
