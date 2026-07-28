@@ -21,6 +21,53 @@
     overflow-wrap: anywhere;
 }
 
+.dark .tiptap,
+.dark .ProseMirror {
+    background: #0f172a;
+    border-color: #334155;
+    color: #f8fafc;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+}
+
+.dark .tiptap h1,
+.dark .tiptap h2,
+.dark .tiptap h3,
+.dark .ProseMirror h1,
+.dark .ProseMirror h2,
+.dark .ProseMirror h3 {
+    color: #f8fafc;
+}
+
+.dark .tiptap p,
+.dark .ProseMirror p {
+    color: #e2e8f0;
+}
+
+.dark .tiptap code {
+    background: #1e293b;
+    color: #f8fafc;
+    border: 1px solid #334155;
+}
+
+.dark .tiptap pre {
+    background: #020617;
+    color: #e2e8f0;
+    border: 1px solid #334155;
+}
+
+.dark .tiptap a,
+.dark .ProseMirror a {
+    color: #818cf8;
+}
+
+.dark .tiptap p.is-editor-empty:first-child::before {
+    color: #64748b;
+}
+
+.dark .tiptap img {
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+}
+
 @media (min-width: 640px) {
     .tiptap,
     .ProseMirror {

@@ -71,22 +71,22 @@ function Dashboard() {
           {/* Left — Logo + Nav */}
           <div className="flex items-center gap-3 sm:gap-8 min-w-0">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center shrink-0">
-                <Zap className="w-4 h-4 text-white" />
-              </div>
+              <div className="w-9 h-9 rounded-xl bg-slate-900 dark:bg-white flex items-center justify-center shrink-0">
+  <Zap className="w-4 h-4 text-white dark:text-slate-900" />
+</div>
               <h1 className="font-bold text-lg truncate">Noteflow</h1>
             </div>
 
             <div className="hidden md:flex gap-1">
               <button
                 onClick={() => setActiveTab('notes')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'notes' ? 'bg-slate-100 text-slate-900 dark:text-white' : 'hover:bg-slate-100 text-slate-600 dark:text-slate-300'}`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'notes' ? 'bg-slate-100 dark:bg-slate-600 text-slate-900  dark:text-white' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'}`}
               >
                 Notes
               </button>
               <button
                 onClick={() => setActiveTab('shared')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'shared' ? 'bg-slate-100 text-slate-900 dark:text-white' : 'hover:bg-slate-100 dark:hover:bg-slate-800  text-slate-600 dark:text-slate-300'}`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium ${activeTab === 'shared' ? 'bg-slate-100 dark:bg-slate-600 text-slate-900 dark:text-white' : 'hover:bg-slate-100 dark:hover:bg-slate-800  text-slate-600 dark:text-slate-300'}`}
               > 
                 Shared
               </button>
@@ -148,14 +148,14 @@ dark:bg-slate-800 rounded-xl px-3 py-2 w-56">
         </div>
 
         {searchOpen && (
-          <div className="md:hidden border-t border-slate-200 bg-white px-4 py-3">
-            <div className="flex items-center gap-2 bg-slate-100 rounded-xl px-3 py-2 search-container">
-              <Search size={15} className="text-slate-400 dark:text-slate-500 shrink-0" />
+          <div className="border-t border-slate-200 bg-white px-4 py-3 transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900 md:hidden">
+            <div className="flex items-center gap-2 rounded-xl bg-slate-100 px-3 py-2 search-container dark:bg-slate-800">
+              <Search size={15} className="shrink-0 text-slate-400 dark:text-slate-500" />
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search notes..."
-                className="bg-transparent text-sm outline-none w-full text-slate-700 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                className="w-full bg-transparent text-sm outline-none text-slate-700 placeholder:text-slate-400 dark:text-slate-100 dark:placeholder:text-slate-500"
                 autoFocus
               />
             </div>
@@ -163,8 +163,8 @@ dark:bg-slate-800 rounded-xl px-3 py-2 w-56">
         )}
 
         {menuOpen && (
-          <div className="md:hidden border-t bg-white">
-            <div className="px-4 py-3 border-b bg-slate-200 dark:bg-slate-700">
+          <div className="border-t bg-white transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900 md:hidden">
+            <div className="border-b border-slate-200 bg-slate-200 px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold text-sm shrink-0">
@@ -193,7 +193,7 @@ dark:bg-slate-800 rounded-xl px-3 py-2 w-56">
                 setActiveTab('notes')
                 setMenuOpen(false)
               }}
-              className={`block w-full text-left px-5 py-4 text-sm font-medium ${activeTab === 'notes' ? 'bg-slate-100 text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'}`}
+              className={`block w-full text-left px-5 py-4 text-sm font-medium ${activeTab === 'notes' ? 'bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white' : 'text-slate-600 dark:text-slate-300'}`}
             >
               Notes
             </button>
@@ -202,7 +202,7 @@ dark:bg-slate-800 rounded-xl px-3 py-2 w-56">
                 setActiveTab('shared')
                 setMenuOpen(false)
               }}
-              className={`block w-full text-left px-5 py-4 text-sm font-medium ${activeTab === 'shared' ? 'bg-slate-100 text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-300'}`}
+              className={`block w-full text-left px-5 py-4 text-sm font-medium ${activeTab === 'shared' ? 'bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white' : 'text-slate-600 dark:text-slate-300'}`}
             >
               Shared
             </button>
@@ -234,12 +234,12 @@ dark:bg-slate-800 rounded-xl px-3 py-2 w-56">
         {/* Heading */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-5 mb-8 sm:mb-10">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-gray-400">Welcome back, {user?.name?.split(' ')[0]}!</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-gray-300">Welcome back, {user?.name?.split(' ')[0]}!</h1>
             <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm">Here's what you've been working on.</p>
           </div>
           <button
             onClick={handleCreateNote}
-            className="w-full sm:w-auto bg-slate-900 text-white px-5 py-3 rounded-2xl flex items-center justify-center gap-2 hover:bg-slate-800 transition text-sm font-medium"
+            className="w-full sm:w-auto bg-slate-900 text-white px-5 py-3 rounded-2xl flex items-center justify-center gap-2 hover:bg-slate-800 transition text-sm font-medium dark:bg-slate-800 dark:hover:bg-slate-700"
           >
             <Plus size={16} />
             New Note
@@ -250,7 +250,7 @@ dark:bg-slate-800 rounded-xl px-3 py-2 w-56">
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {loading ? (
             Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-2xl borderp-5 h-56 animate-pulse">
+              <div key={i} className="h-56 animate-pulse rounded-2xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900 p-5">
                 <div className="h-3 bg-slate-200 dark:bg-slate-700  rounded w-1/4 mb-4" />
                 <div className="h-5 bg-slate-200 dark:bg-slate-700  rounded w-3/4 mb-3" />
                 <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-full mb-2" />

@@ -46,22 +46,20 @@ function AIGenerateBar({
   const isPdfProcessing = pdfStatus === 'processing' || uploading
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 z-30">
-
-      {/* Answer card — only shown in PDF mode after a question was asked */}
+    <div className="fixed bottom-6 left-1/2 z-30 w-full max-w-xl -translate-x-1/2 px-4">
       {pdfMode && answer && (
-        <div className="mb-2 bg-white border border-slate-200 rounded-2xl shadow-lg p-4 max-h-[50vh] overflow-y-auto">
-          <p className="text-sm text-slate-700 whitespace-pre-wrap">{answer}</p>
-          <div className="flex items-center gap-3 mt-3 sticky bottom-0 bg-white pt-2">
+        <div className="mb-2 max-h-[50vh] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-4 shadow-lg transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
+          <p className="whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-200">{answer}</p>
+          <div className="sticky bottom-0 mt-3 flex items-center gap-3 bg-white pt-2 transition-colors duration-300 dark:bg-slate-900">
             <button
               onClick={() => { onInsertAnswer(answer); onDismissAnswer() }}
-              className="text-xs font-medium text-indigo-600 hover:text-indigo-700"
+              className="text-xs font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-300 dark:hover:text-indigo-200"
             >
               Insert into note
             </button>
             <button
               onClick={onDismissAnswer}
-              className="text-xs font-medium text-slate-400 hover:text-slate-600"
+              className="text-xs font-medium text-slate-400 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-200"
             >
               Dismiss
             </button>
@@ -69,40 +67,39 @@ function AIGenerateBar({
         </div>
       )}
 
-      <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-2xl shadow-lg px-4 py-3">
-        <div className="relative group shrink-0">
-  <button
-    onClick={() => setPdfMode(false)}
-    className={`p-1 rounded-lg transition ${
-      !pdfMode ? "bg-indigo-50 text-indigo-600" : "text-slate-300 hover:text-slate-500"
-    }`}
-  >
-    <Sparkles size={18} />
-  </button>
-  <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block whitespace-nowrap bg-slate-900 text-white text-xs px-2 py-1 rounded-lg">
-    {pdfMode ? "Switch to general AI" : "Generate with AI"}
-  </div>
-</div>
+      <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-lg transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
+        <div className="group relative shrink-0">
+          <button
+            onClick={() => setPdfMode(false)}
+            className={`rounded-lg p-1 transition ${
+              !pdfMode ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300" : "text-slate-300 hover:text-slate-500 dark:text-slate-500 dark:hover:text-slate-200"
+            }`}
+          >
+            <Sparkles size={18} />
+          </button>
+          <div className="absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-900 px-2 py-1 text-xs text-white group-hover:block">
+            {pdfMode ? "Switch to general AI" : "Generate with AI"}
+          </div>
+        </div>
 
-<div className="relative group shrink-0">
-  <button
-    onClick={handleToggleMode}
-    disabled={!isPro}
-    className={`p-1 rounded-lg transition ${
-      pdfMode ? "bg-indigo-50 text-indigo-600" : "text-slate-400 hover:text-slate-600"
-    } ${!isPro ? "opacity-40 cursor-not-allowed" : ""}`}
-  >
-    <BookOpen size={18} />
-  </button>
-  <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block whitespace-nowrap bg-slate-900 text-white text-xs px-2 py-1 rounded-lg">
-    {isPro ? (pdfMode ? "Ask PDF (active)" : "Switch to Ask PDF") : "Ask PDF — Pro only"}
-  </div>
-</div>
+        <div className="group relative shrink-0">
+          <button
+            onClick={handleToggleMode}
+            disabled={!isPro}
+            className={`rounded-lg p-1 transition ${
+              pdfMode ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300" : "text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-200"
+            } ${!isPro ? "cursor-not-allowed opacity-40" : ""}`}
+          >
+            <BookOpen size={18} />
+          </button>
+          <div className="absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-900 px-2 py-1 text-xs text-white group-hover:block">
+            {isPro ? (pdfMode ? "Ask PDF (active)" : "Switch to Ask PDF") : "Ask PDF — Pro only"}
+          </div>
+        </div>
 
-        {/* PDF mode, but no ready PDF yet: show upload prompt instead of the input */}
         {pdfMode && !isPdfReady ? (
-          <div className="flex-1 flex items-center justify-between">
-            <span className="text-sm text-slate-500">
+          <div className="flex flex-1 items-center justify-between">
+            <span className="text-sm text-slate-500 dark:text-slate-400">
               {checkingExisting
                 ? "Checking for existing PDF..."
                 : isPdfProcessing
@@ -115,7 +112,7 @@ function AIGenerateBar({
               onClick={() => fileInputRef.current?.click()}
               disabled={isPdfProcessing || checkingExisting}
               title="Maximum PDF file size: 20 MB"
-              className="text-xs font-medium text-indigo-600 hover:text-indigo-700 flex items-center gap-1 disabled:opacity-50"
+              className="flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-700 disabled:opacity-50 dark:text-indigo-300 dark:hover:text-indigo-200"
             >
               {isPdfProcessing ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
               Upload
@@ -139,12 +136,12 @@ function AIGenerateBar({
                   ? `Ask a question about ${fileName || 'your PDF'}...`
                   : "Ask AI to expand on this topic or generate a summary..."
               }
-              className="flex-1 outline-none text-sm bg-transparent"
+              className="flex-1 bg-transparent text-sm outline-none text-slate-700 placeholder:text-slate-400 dark:text-slate-200 dark:placeholder:text-slate-500"
             />
             <button
               onClick={handleSubmit}
               disabled={loading || asking || !prompt.trim()}
-              className="bg-slate-900 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-slate-800 transition disabled:opacity-50 flex items-center gap-2"
+              className="flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:opacity-50 dark:bg-indigo-600 dark:hover:bg-indigo-500"
             >
               {pdfMode ? (asking ? 'Thinking...' : 'Ask') : (loading ? 'Generating...' : 'Generate')}
               <Sparkles size={14} />
@@ -154,12 +151,12 @@ function AIGenerateBar({
       </div>
 
       {pdfMode && isPdfReady && (
-        <div className="mt-1.5 bg-white border border-slate-200 rounded-xl shadow-md px-3 py-2 flex items-center justify-between">
-          <span className="text-xs text-slate-500 truncate mr-2">Answering from: {fileName}</span>
+        <div className="mt-1.5 flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-md transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
+          <span className="mr-2 truncate text-xs text-slate-500 dark:text-slate-400">Answering from: {fileName}</span>
           <button
             onClick={() => fileInputRef.current?.click()}
             title="Maximum PDF file size: 20 MB"
-            className="text-xs font-medium text-slate-400 hover:text-indigo-600 shrink-0"
+            className="shrink-0 text-xs font-medium text-slate-400 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-300"
           >
             Replace PDF
           </button>

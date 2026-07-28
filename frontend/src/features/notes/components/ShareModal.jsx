@@ -30,51 +30,45 @@ function ShareModal({ noteId, onClose }) {
     }
 
     return (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 p-6 flex flex-col gap-4">
-
-                {/* Header */}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div className="mx-4 flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
                 <div className="flex items-center justify-between">
-                    <h2 className="font-semibold text-slate-800 flex items-center gap-2">
+                    <h2 className="flex items-center gap-2 font-semibold text-slate-800 dark:text-slate-100">
                         <UserPlus size={16} className="text-indigo-500" />
                         Share Note
                     </h2>
-                    <button onClick={onClose} className="p-1 rounded-lg hover:bg-slate-100">
+                    <button onClick={onClose} className="rounded-lg p-1 transition hover:bg-slate-100 dark:hover:bg-slate-800">
                         <X size={16} className="text-slate-400" />
                     </button>
                 </div>
 
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                     Enter the email of the user you want to collaborate with. They must already have a ThinkForge account.
                 </p>
 
-                {/* Input */}
                 <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleShare()}
                     placeholder="collaborator@email.com"
-                    className="border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:ring-2 focus:ring-indigo-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
                     autoFocus
                 />
 
-                {/* Error */}
                 {error && <p className="text-xs text-red-500">{error}</p>}
 
-                {/* Success */}
                 {success && (
-                    <p className="text-xs text-green-600 flex items-center gap-1">
+                    <p className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
                         <Check size={12} />
                         {success}
                     </p>
                 )}
 
-                {/* Button */}
                 <button
                     onClick={handleShare}
                     disabled={loading || !email.trim()}
-                    className="bg-slate-900 text-white text-sm font-medium py-2.5 rounded-xl hover:bg-slate-800 transition disabled:opacity-50"
+                    className="rounded-xl bg-slate-900 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 disabled:opacity-50 dark:bg-indigo-600 dark:hover:bg-indigo-500"
                 >
                     {loading ? 'Sharing...' : 'Share'}
                 </button>

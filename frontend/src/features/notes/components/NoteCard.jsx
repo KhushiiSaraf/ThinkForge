@@ -14,46 +14,43 @@ function NoteCard({ note, onDelete, onShare, currentUserId }) {
   return (
     <div
       onClick={() => navigate(`/notes/${note._id}`)}
-      className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-slate-300 cursor-pointer min-h-52"
+      className="flex min-h-52 cursor-pointer flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700"
     >
-      {/* Title + Preview */}
       <div className="flex-1">
-        <h2 className="text-base font-semibold text-slate-900 line-clamp-2 mb-2">
+        <h2 className="mb-2 line-clamp-2 text-base font-semibold text-slate-900 dark:text-slate-100">
           {note.title || 'Untitled'}
         </h2>
-        <p className="text-sm text-slate-400 leading-6 line-clamp-3">
+        <p className="line-clamp-3 text-sm leading-6 text-slate-400 dark:text-slate-400">
           {getPreview(note.content)}
         </p>
-        {/* Shared indicator */}
         {String(note.owner?._id) !== String(currentUserId) && note.owner?.name && (
-            <p className="text-xs text-indigo-500 font-medium">
+            <p className="mt-2 text-xs font-medium text-indigo-500">
                 Shared by {note.owner?.name}
             </p>
         )}
       </div>
 
-      {/* Footer */}
-      <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-slate-400 text-xs">
+      <div className="flex items-center justify-between border-t border-slate-100 pt-4 dark:border-slate-800">
+        <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
           <CalendarDays size={14} />
           {formatDate(note.createdAt)}
         </div>
         <div className="flex items-center gap-1">
-        <button
+          <button
             onClick={(e) => {
                 e.stopPropagation()
                 onShare(note._id)
             }}
-            className="p-2 rounded-lg hover:bg-slate-100 transition"
-        >
-            <Share2 size={15} className="text-slate-400" />
-        </button>
+            className="rounded-lg p-2 transition hover:bg-slate-100 dark:hover:bg-slate-800"
+          >
+            <Share2 size={15} className="text-slate-400 dark:text-slate-400" />
+          </button>
           <button
             onClick={(e) => {
               e.stopPropagation()
               onDelete(note._id)
             }}
-            className="p-2 rounded-lg hover:bg-red-50 transition"
+            className="rounded-lg p-2 transition hover:bg-red-50 dark:hover:bg-red-950/30"
           >
             <Trash2 size={15} className="text-red-400" />
           </button>

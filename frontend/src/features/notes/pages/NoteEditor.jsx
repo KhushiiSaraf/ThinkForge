@@ -34,12 +34,12 @@ function Toolbar({ editor, onDiagramClick }) {
 
   const btnClass = (active) => 
     `p-2 rounded-lg transition shrink-0 ${active 
-      ? 'bg-indigo-50 text-indigo-600' 
-      : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700'
+      ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300' 
+      : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100'
     }`
 
   return (
-    <div className="flex items-center gap-1 mb-4 p-2 bg-white border border-slate-200 rounded-xl flex-wrap overflow-x-auto">
+    <div className="mb-4 flex flex-wrap items-center gap-1 overflow-x-auto rounded-xl border border-slate-200 bg-white p-2 transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
       
       <button title="Bold" className={btnClass(editor.isActive('bold'))}
         onClick={() => editor.chain().focus().toggleBold().run()}>
@@ -294,7 +294,7 @@ export default function NoteEditor() {
 
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-white">
         <EditorTopBar
           title={title}
           setTitle={handleTitleChange}
@@ -305,24 +305,24 @@ export default function NoteEditor() {
         />
 
         {isSharedNote && noteOwner && (
-            <div className="bg-indigo-50 border-b border-indigo-100 px-4 py-2 sm:px-6">
-                <span className="text-xs text-indigo-600 font-medium">
+            <div className="border-b border-indigo-100 bg-indigo-50 px-4 py-2 transition-colors duration-300 dark:border-indigo-900/40 dark:bg-indigo-900/20 sm:px-6">
+                <span className="text-xs font-medium text-indigo-600 dark:text-indigo-300">
                     Shared document — originally created by {noteOwner}
                 </span>
             </div>
         )}
 
-        <div className="flex flex-col lg:flex-row">
+        <div className="flex flex-col gap-6 px-4 py-4 sm:px-6 sm:py-8 lg:flex-row">
             {/* Editor area */}
-            <div className="flex-1 w-full max-w-3xl mx-auto px-4 py-4 sm:px-6 sm:py-8">
+            <div className="mx-auto flex-1 w-full max-w-3xl">
                 <Toolbar editor={editor} onDiagramClick={() => setDiagramModalOpen(true)} />
-                <div className="w-full">
+                <div className="w-full rounded-2xl border border-slate-200 bg-white shadow-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
                     <EditorContent editor={editor} />
                 </div>
             </div>
 
             {/* Web Search Panel */}
-            <div className="w-full lg:w-auto">
+            <div className="w-full lg:w-auto lg:min-w-[320px]">
                 <WebSearchPanel
                    onInsert={handleInsertSnippet}
                    initialQuery={searchQuery}

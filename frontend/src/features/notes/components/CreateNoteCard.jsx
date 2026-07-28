@@ -24,9 +24,12 @@ function CreateNoteCard() {
         hover:bg-slate-100
         hover:shadow-lg
         hover:-translate-y-1
+        dark:border-slate-700
+        dark:bg-slate-900
+        dark:hover:border-indigo-400
+        dark:hover:bg-slate-800
       "
     >
-      {/* Plus Icon */}
       <div
         className="
           w-16
@@ -40,6 +43,8 @@ function CreateNoteCard() {
           duration-300
           group-hover:bg-slate-900
           group-hover:scale-110
+          dark:bg-slate-800
+          dark:group-hover:bg-indigo-600
         "
       >
         <Plus
@@ -49,15 +54,16 @@ function CreateNoteCard() {
             transition-colors
             duration-300
             group-hover:text-white
+            dark:text-slate-300
           "
         />
       </div>
 
-      <h2 className="mt-6 text-lg font-semibold text-slate-900">
+      <h2 className="mt-6 text-lg font-semibold text-slate-900 dark:text-slate-100">
         Create New Note
       </h2>
 
-      <p className="mt-2 text-sm text-slate-500 text-center px-8">
+      <p className="mt-2 px-8 text-center text-sm text-slate-500 dark:text-slate-400">
         Start capturing ideas, research, or AI-generated insights.
       </p>
     </button>

@@ -11,13 +11,11 @@ function DiagramModal({ onClose, onInsert, onGenerate, loading }) {
     const [error, setError] = useState('')
     const previewRef = useRef(null)
 
-    // whenever syntax changes, render it with Mermaid
     useEffect(() => {
         if (!syntax || !previewRef.current) return
 
         const render = async () => {
             try {
-                // mermaid.render takes an id and syntax, returns SVG
                 const { svg } = await mermaid.render('diagram-preview', syntax)
                 previewRef.current.innerHTML = svg
                 setError('')
@@ -43,32 +41,26 @@ function DiagramModal({ onClose, onInsert, onGenerate, loading }) {
 
     const handleInsert = () => {
         if (!previewRef.current?.innerHTML) return
-        // get the SVG string and insert into editor
         const svg = previewRef.current.innerHTML
         onInsert(svg)
         onClose()
     }
 
     return (
-        // backdrop
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-            {/* modal box */}
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 flex flex-col gap-4 p-6">
-
-                {/* Header */}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div className="mx-4 flex w-full max-w-lg flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
                 <div className="flex items-center justify-between">
-                    <h2 className="font-semibold text-slate-800 flex items-center gap-2">
+                    <h2 className="flex items-center gap-2 font-semibold text-slate-800 dark:text-slate-100">
                         <Sparkles size={16} className="text-indigo-500" />
                         Generate Diagram
                     </h2>
-                    <button onClick={onClose} className="p-1 rounded-lg hover:bg-slate-100">
-                        <X size={16} className="text-slate-500" />
+                    <button onClick={onClose} className="rounded-lg p-1 transition hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <X size={16} className="text-slate-500 dark:text-slate-400" />
                     </button>
                 </div>
 
-                {/* Prompt input */}
                 <div className="flex flex-col gap-2">
-                    <label className="text-sm text-slate-600 font-medium">
+                    <label className="text-sm font-medium text-slate-600 dark:text-slate-300">
                         Describe your diagram in plain English
                     </label>
                     <textarea
@@ -76,36 +68,33 @@ function DiagramModal({ onClose, onInsert, onGenerate, loading }) {
                         onChange={(e) => setPrompt(e.target.value)}
                         placeholder="e.g. types of machine learning, software development lifecycle, how HTTP request works"
                         rows={3}
-                        className="text-sm border border-slate-200 rounded-xl px-3 py-2 outline-none focus:border-indigo-400 resize-none"
+                        className="resize-none rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-indigo-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
                     />
                 </div>
 
-                {/* Generate button */}
                 <button
                     onClick={handleGenerate}
                     disabled={loading || !prompt.trim()}
-                    className="bg-slate-900 text-white text-sm font-medium py-2 rounded-xl hover:bg-slate-800 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="flex items-center justify-center gap-2 rounded-xl bg-slate-900 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:opacity-50 dark:bg-indigo-600 dark:hover:bg-indigo-500"
                 >
                     {loading ? 'Generating...' : 'Generate Diagram'}
                     <Sparkles size={14} />
                 </button>
 
-                {/* Error */}
                 {error && (
                     <p className="text-sm text-red-500">{error}</p>
                 )}
 
-                {/* Preview */}
                 {syntax && (
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm text-slate-600 font-medium">Preview</label>
+                        <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Preview</label>
                         <div
                             ref={previewRef}
-                            className="border border-slate-200 rounded-xl p-4 overflow-auto bg-slate-50 flex items-center justify-center min-h-40"
+                            className="flex min-h-40 items-center justify-center overflow-auto rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800"
                         />
                         <button
                             onClick={handleInsert}
-                            className="bg-indigo-600 text-white text-sm font-medium py-2 rounded-xl hover:bg-indigo-700 transition"
+                            className="rounded-xl bg-indigo-600 py-2 text-sm font-medium text-white transition hover:bg-indigo-700"
                         >
                             Insert into Note
                         </button>
