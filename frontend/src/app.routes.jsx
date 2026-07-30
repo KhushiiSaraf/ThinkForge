@@ -4,6 +4,7 @@ import Register from './features/auth/pages/Register'
 import LandingPage from './pages/LandingPage'
 import Dashboard from './features/notes/pages/Dashboard'
 import NoteEditor from './features/notes/pages/NoteEditor'
+import VerifyEmail from './features/auth/pages/VerifyEmail'
 // import Home from './features/interview/pages/Home'
 // import NotFound from './pages/NotFound'
 import Protected from './features/auth/components/Protected'
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
     {
         path: "/notes/:id",
         element: <Protected><NoteEditor /></Protected>
+    },
+    {
+        path: "/verify-email",
+        element: <PublicRoute><VerifyEmail /></PublicRoute>
     },
     // {
     // path: "*",

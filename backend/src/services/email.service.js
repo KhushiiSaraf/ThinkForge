@@ -1,11 +1,18 @@
-// backend/src/services/email.service.js
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  host: process.env.BREVO_SMTP_HOST,
+  port: Number(process.env.BREVO_SMTP_PORT),
+  secure: false, // false for port 587 (uses STARTTLS), true would be for port 465
+  auth: {
+    user: process.env.BREVO_SMTP_USER,
+    pass: process.env.BREVO_SMTP_PASS,
+  },
+});
 
 async function sendOtpEmail(to, otp) {
-  await resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL,
+  await transporter.sendMail({
+    from: `ThinkForge <${process.env.BREVO_FROM_EMAIL}>`,
     to,
     subject: 'Verify your email — ThinkForge',
     html: `

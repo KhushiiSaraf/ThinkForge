@@ -47,3 +47,21 @@ export async function getMe(){
     const response = await api.get("/api/auth/get-me")
     return response.data;
 }
+
+export async function sendOtp(userId) {
+    try {
+        const response = await api.post('/api/auth/send-otp', { userId })
+        return response.data;
+    } catch (error) {
+        return error.response?.data;
+    }
+}
+
+export async function verifyOtp({ userId, otp }) {
+    try {
+        const response = await api.post('/api/auth/verify-otp', { userId, otp })
+        return response.data;
+    } catch (error) {
+        return error.response?.data;
+    }
+}

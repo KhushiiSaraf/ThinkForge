@@ -63,17 +63,9 @@ async function registerUserController(req, res) {
         }
 
         res.status(201).json({
-            message: "User registered successfully",
-            user: { id: newUser._id, name: newUser.name, email: newUser.email }
-        });
-
-        res.status(201).json({
-            message: "User registered successfully",
-            user: {
-                id: newUser._id,
-                name: newUser.name,
-                email: newUser.email
-            }
+            message: "User registered successfully. Please verify your email.",
+            userId: newUser._id,
+            requiresVerification: true,
         });
     }
     catch (error) {
@@ -113,12 +105,22 @@ async function loginUserController(req, res) {
             return res.status(400).json({ message: "Invalid email or password" });
         }
 
+        // block login until the user has verified their email
+        if (!user.isEmailVerified) {
+            return res.status(403).json({
+                message: "Please verify your email before logging in",
+                requiresVerification: true,
+                userId: user._id,
+            });
+        }
+
         // generate JWT token
         const token = jwt.sign(
             { id: user._id, username: user.name },
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
+
         // set token in cookie
         res.cookie('token', token, {
             httpOnly: true,
@@ -188,16 +190,18 @@ async function getMeController(req, res) {
         }
     });
 }
-
 /**
  * @name sendOtpController
  * @route POST /api/auth/send-otp
- * @desc Resend a verification OTP to the logged-in user's email
- * @access Private
+ * @desc Send (or resend) a verification OTP — public, identified by userId in body
+ * @access Public
  */
 async function sendOtpController(req, res) {
     try {
-        const user = await userModel.findById(req.user._id);
+        const { userId } = req.body;
+        if (!userId) return res.status(400).json({ message: "userId is required" });
+
+        const user = await userModel.findById(userId);
         if (!user) return res.status(404).json({ message: "User not found" });
 
         if (user.isEmailVerified) {
@@ -224,25 +228,45 @@ async function sendOtpController(req, res) {
 /**
  * @name verifyOtpController
  * @route POST /api/auth/verify-otp
- * @desc Verify the OTP and mark the user's email as verified
- * @access Private
+ * @desc Verify OTP, mark email verified, and log the user in
+ * @access Public
  */
 async function verifyOtpController(req, res) {
     try {
-        const { otp } = req.body;
-        if (!otp) return res.status(400).json({ message: "OTP is required" });
-
-        const result = await verifyOtp(req.user._id, otp);
-        if (!result.valid) {
-            const message = result.reason === 'expired'
-                ? "Code expired — request a new one"
-                : "Incorrect code";
-            return res.status(400).json({ message });
+        const { userId, otp } = req.body;
+        if (!userId || !otp) {
+            return res.status(400).json({ message: "userId and otp are required" });
         }
 
-        await userModel.findByIdAndUpdate(req.user._id, { isEmailVerified: true });
+        const result = await verifyOtp(userId, otp);
+        if (!result.valid) {
+            const messages = {
+                expired: "Code expired — request a new one",
+                mismatch: "Incorrect code",
+                too_many_attempts: "Too many incorrect attempts — request a new code",
+            };
+            return res.status(400).json({ message: messages[result.reason] });
+        }
 
-        res.status(200).json({ message: "Email verified successfully" });
+        const user = await userModel.findByIdAndUpdate(userId, { isEmailVerified: true }, { returnDocument: 'after' });
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        const token = jwt.sign(
+            { id: user._id, username: user.name },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            maxAge: 24 * 60 * 60 * 1000
+        });
+
+        res.status(200).json({
+            message: "Email verified successfully",
+            user: { id: user._id, name: user.name, email: user.email }
+        });
     } catch (error) {
         console.error("Error in verifyOtpController:", error);
         res.status(500).json({ message: "Verification failed" });

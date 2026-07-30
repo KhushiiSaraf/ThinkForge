@@ -33,7 +33,7 @@ authRouter.post('/logout', authMiddleware, logoutUserController);
  */
 authRouter.get('/get-me', authMiddleware, getMeController);
 
-authRouter.post('/send-otp', authMiddleware, sendOtpController);
-authRouter.post('/verify-otp', authMiddleware, verifyOtpController);
+authRouter.post('/send-otp', sendOtpController);
+authRouter.post('/verify-otp', verifyOtpController);
 
 module.exports = authRouter;
