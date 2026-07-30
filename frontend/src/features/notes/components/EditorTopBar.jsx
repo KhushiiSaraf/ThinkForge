@@ -1,9 +1,7 @@
 import { ArrowLeft, FileDown, Share2 } from "lucide-react"
-import { useNavigate } from "react-router-dom"
 import html2pdf from 'html2pdf.js'
 
-function EditorTopBar({ title, setTitle, saving, saved, onSave, onShareClick }) {
-  const navigate = useNavigate()
+function EditorTopBar({ title, setTitle, saving, saved, onSave, onShareClick, onBackClick }) {
 
    const handleExportPDF = () => {
     const element = document.querySelector('.tiptap')
@@ -29,7 +27,7 @@ function EditorTopBar({ title, setTitle, saving, saved, onSave, onShareClick }) 
   return (
     <div className="sticky top-0 z-40 flex flex-col gap-3 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900/95 sm:px-6 md:flex-row md:items-center md:justify-between">
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-        <button onClick={() => navigate('/dashboard')} className="self-start rounded-lg p-2 transition hover:bg-slate-100 dark:hover:bg-slate-800 sm:self-auto">
+        <button onClick={onBackClick} className="self-start rounded-lg p-2 transition hover:bg-slate-100 dark:hover:bg-slate-800 sm:self-auto">
           <ArrowLeft size={18} className="text-slate-600 dark:text-slate-300" />
         </button>
         <input

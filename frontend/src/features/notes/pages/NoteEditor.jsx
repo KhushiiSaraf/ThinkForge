@@ -6,7 +6,7 @@ import { Color } from '@tiptap/extension-color'
 import { TextStyle } from '@tiptap/extension-text-style'
 import Highlight from '@tiptap/extension-highlight'
 import { useEffect, useState, useCallback } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { 
   Bold, Italic, Underline as UnderlineIcon, Heading1, Heading2, 
   List, ListOrdered, Code, Highlighter, Link as LinkIcon, 
@@ -27,6 +27,7 @@ import '../styles/editor.css'
 import { useSocket } from '../hooks/useSocket'
 import { useAuth } from '../../auth/hooks/useAuth'
 import ShareModal from '../components/ShareModal'
+import ConfirmDialog from '../components/ConfirmDialog'
 import { usePdfRag } from '../hooks/usePdfRag'
 
 function Toolbar({ editor, onDiagramClick }) {
@@ -108,6 +109,7 @@ function Toolbar({ editor, onDiagramClick }) {
 }
 export default function NoteEditor() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const { handleGetNote, handleUpdateNote, currentNote } = useNotes()
   const { handleGenerate, handleRewrite,handleGenerateDiagram, loading: aiLoading } = useAI()
   const [title, setTitle] = useState('Untitled')
@@ -122,6 +124,9 @@ export default function NoteEditor() {
 
   // Share modal state
   const [shareModalOpen, setShareModalOpen] = useState(false)
+
+  // Leave editor confirmation state
+  const [leaveConfirmOpen, setLeaveConfirmOpen] = useState(false)
 
   // Note Owner check
   const [isSharedNote, setIsSharedNote] = useState(false)
@@ -231,6 +236,20 @@ export default function NoteEditor() {
     setSaved(false)
   }
 
+  const handleBackNavigation = () => {
+    if (!saved) {
+      setLeaveConfirmOpen(true)
+      return
+    }
+
+    navigate('/dashboard')
+  }
+
+  const confirmLeaveEditor = () => {
+    setLeaveConfirmOpen(false)
+    navigate('/dashboard')
+  }
+
   // AI Generate — inserts text at current cursor position
   const handleAIGenerate = async (prompt) => {
     const text = await handleGenerate(prompt)
@@ -302,6 +321,7 @@ export default function NoteEditor() {
           saved={saved}
           onSave={handleSave}
           onShareClick={() => setShareModalOpen(true)}
+          onBackClick={handleBackNavigation}
         />
 
         {isSharedNote && noteOwner && (
@@ -366,6 +386,17 @@ export default function NoteEditor() {
             <ShareModal
                 noteId={id}
                 onClose={() => setShareModalOpen(false)}
+            />
+        )}
+
+        {leaveConfirmOpen && (
+            <ConfirmDialog
+                title="Leave editor?"
+                message="You have unsaved changes. If you leave now, they will be lost."
+                confirmText="Leave without saving"
+                danger
+                onConfirm={confirmLeaveEditor}
+                onCancel={() => setLeaveConfirmOpen(false)}
             />
         )}
      </div>

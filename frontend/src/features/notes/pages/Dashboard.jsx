@@ -74,7 +74,7 @@ function Dashboard() {
               <div className="w-9 h-9 rounded-xl bg-slate-900 dark:bg-white flex items-center justify-center shrink-0">
   <Zap className="w-4 h-4 text-white dark:text-slate-900" />
 </div>
-              <h1 className="font-bold text-lg truncate">Noteflow</h1>
+              <h1 className="font-bold text-lg truncate">ThinkForge</h1>
             </div>
 
             <div className="hidden md:flex gap-1">
