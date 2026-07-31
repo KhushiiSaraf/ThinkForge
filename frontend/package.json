@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.1",
+    "@tiptap/extension-code-block-lowlight": "^3.29.2",
     "@tiptap/extension-color": "^3.27.1",
     "@tiptap/extension-highlight": "^3.27.1",
     "@tiptap/extension-image": "^3.27.3",
@@ -23,6 +24,7 @@
     "@tiptap/starter-kit": "^3.27.1",
     "axios": "^1.18.1",
     "html2pdf.js": "^0.14.0",
+    "lowlight": "^3.3.0",
     "lucide-react": "^1.21.0",
     "marked": "^18.0.6",
     "mermaid": "^11.16.0",

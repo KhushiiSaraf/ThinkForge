@@ -48,7 +48,7 @@ function DiagramModal({ onClose, onInsert, onGenerate, loading }) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-            <div className="mx-4 flex w-full max-w-lg flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
+            <div className="diagram-dialog-scrollbar mx-4 flex w-full max-w-lg max-h-[90vh] flex-col gap-4 overflow-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-xl transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
                 <div className="flex items-center justify-between">
                     <h2 className="flex items-center gap-2 font-semibold text-slate-800 dark:text-slate-100">
                         <Sparkles size={16} className="text-indigo-500" />
@@ -90,7 +90,7 @@ function DiagramModal({ onClose, onInsert, onGenerate, loading }) {
                         <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Preview</label>
                         <div
                             ref={previewRef}
-                            className="flex min-h-40 items-center justify-center overflow-auto rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800"
+                            className="diagram-scrollbar w-full flex min-h-48 max-h-[60vh] items-start justify-center overflow-auto rounded-xl border border-slate-200 bg-slate-50 p-4 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
                         />
                         <button
                             onClick={handleInsert}

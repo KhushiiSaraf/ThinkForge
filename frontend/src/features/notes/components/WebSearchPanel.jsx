@@ -38,7 +38,7 @@ function WebSearchPanel({ onInsert, initialQuery }) {
                 </div>
             </form>
 
-            <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-3">
+            <div className="scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 scrollbar-track-transparent flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-3">
                 {loading && (
                     <div className="flex flex-col gap-3">
                         {Array.from({ length: 3 }).map((_, i) => (

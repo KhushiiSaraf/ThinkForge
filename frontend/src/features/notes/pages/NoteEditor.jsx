@@ -28,9 +28,27 @@ import { useSocket } from '../hooks/useSocket'
 import { useAuth } from '../../auth/hooks/useAuth'
 import ShareModal from '../components/ShareModal'
 import ConfirmDialog from '../components/ConfirmDialog'
+import LinkDialog from '../components/LinkDialog'
 import { usePdfRag } from '../hooks/usePdfRag'
+import { common, createLowlight } from 'lowlight'
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 
-function Toolbar({ editor, onDiagramClick }) {
+function Toolbar({ editor, onDiagramClick, onLinkClick }) {
+  const [, refreshToolbar] = useState(0)
+
+  useEffect(() => {
+    if (!editor) return
+
+    const updateToolbar = () => refreshToolbar((value) => value + 1)
+    editor.on('transaction', updateToolbar)
+    editor.on('selectionUpdate', updateToolbar)
+
+    return () => {
+      editor.off('transaction', updateToolbar)
+      editor.off('selectionUpdate', updateToolbar)
+    }
+  }, [editor])
+
   if (!editor) return null
 
   const btnClass = (active) => 
@@ -40,67 +58,64 @@ function Toolbar({ editor, onDiagramClick }) {
     }`
 
   return (
-    <div className="mb-4 flex flex-wrap items-center gap-1 overflow-x-auto rounded-xl border border-slate-200 bg-white p-2 transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
+    <div onMouseDown={(event) => event.preventDefault()} className="editor-toolbar mb-4 flex flex-wrap items-center gap-1 overflow-x-auto rounded-xl border border-slate-200 bg-white p-2 transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
       
-      <button title="Bold" className={btnClass(editor.isActive('bold'))}
+      <button type="button" title="Bold" aria-pressed={editor.isActive('bold')} className={btnClass(editor.isActive('bold'))}
         onClick={() => editor.chain().focus().toggleBold().run()}>
         <Bold size={16} />
       </button>
 
-      <button title="Italic" className={btnClass(editor.isActive('italic'))}
+      <button type="button" title="Italic" aria-pressed={editor.isActive('italic')} className={btnClass(editor.isActive('italic'))}
         onClick={() => editor.chain().focus().toggleItalic().run()}>
         <Italic size={16} />
       </button>
 
-      <button title="Underline" className={btnClass(editor.isActive('underline'))}
+      <button type="button" title="Underline" aria-pressed={editor.isActive('underline')} className={btnClass(editor.isActive('underline'))}
         onClick={() => editor.chain().focus().toggleUnderline().run()}>
         <UnderlineIcon size={16} />
       </button>
 
-      <button title="Heading 1" className={btnClass(editor.isActive('heading', { level: 1 }))}
+      <button type="button" title="Heading 1" aria-pressed={editor.isActive('heading', { level: 1 })} className={btnClass(editor.isActive('heading', { level: 1 }))}
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>
         <Heading1 size={16} />
       </button>
 
-      <button title="Heading 2" className={btnClass(editor.isActive('heading', { level: 2 }))}
+      <button type="button" title="Heading 2" aria-pressed={editor.isActive('heading', { level: 2 })} className={btnClass(editor.isActive('heading', { level: 2 }))}
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
         <Heading2 size={16} />
       </button>
 
-      <button title="Bullet List" className={btnClass(editor.isActive('bulletList'))}
+      <button type="button" title="Bullet List" aria-pressed={editor.isActive('bulletList')} className={btnClass(editor.isActive('bulletList'))}
         onClick={() => editor.chain().focus().toggleBulletList().run()}>
         <List size={16} />
       </button>
 
-      <button title="Numbered List" className={btnClass(editor.isActive('orderedList'))}
+      <button type="button" title="Numbered List" aria-pressed={editor.isActive('orderedList')} className={btnClass(editor.isActive('orderedList'))}
         onClick={() => editor.chain().focus().toggleOrderedList().run()}>
         <ListOrdered size={16} />
       </button>
 
-      <button title="Code Block" className={btnClass(editor.isActive('codeBlock'))}
+      <button type="button" title="Code Block" aria-pressed={editor.isActive('codeBlock')} className={btnClass(editor.isActive('codeBlock'))}
         onClick={() => editor.chain().focus().toggleCodeBlock().run()}>
         <Code size={16} />
       </button>
 
-      <button title="Highlight" className={btnClass(editor.isActive('highlight'))}
+      <button type="button" title="Highlight" aria-pressed={editor.isActive('highlight')} className={btnClass(editor.isActive('highlight'))}
         onClick={() => editor.chain().focus().toggleHighlight().run()}>
         <Highlighter size={16} />
       </button>
 
-      <button title="Add Link" className={btnClass(editor.isActive('link'))}
-        onClick={() => {
-          const url = window.prompt('Enter URL')
-          if (url) editor.chain().focus().setLink({ href: url }).run()
-        }}>
+      <button type="button" title="Add Link" aria-pressed={editor.isActive('link')} className={btnClass(editor.isActive('link'))}
+        onClick={onLinkClick}>
         <LinkIcon size={16} />
       </button>
 
-      <button title="Remove Link" className={btnClass(false)}
+      <button type="button" title="Remove Link" aria-pressed="false" className={btnClass(false)}
         onClick={() => editor.chain().focus().unsetLink().run()}>
         <Unlink size={16} />
       </button>
 
-      <button title="Generate Diagram" className={btnClass(false)} onClick={onDiagramClick}>
+      <button type="button" title="Generate Diagram" aria-pressed="false" className={btnClass(false)} onClick={onDiagramClick}>
         <GitFork size={16} />
       </button>
 
@@ -115,6 +130,7 @@ export default function NoteEditor() {
   const [title, setTitle] = useState('Untitled')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(true)
+  const lowlight = createLowlight(common)
 
   //web search state
   const [searchQuery, setSearchQuery] = useState('')
@@ -128,13 +144,24 @@ export default function NoteEditor() {
   // Leave editor confirmation state
   const [leaveConfirmOpen, setLeaveConfirmOpen] = useState(false)
 
+  // Link dialog state
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false)
+  const [linkUrl, setLinkUrl] = useState('')
+
   // Note Owner check
   const [isSharedNote, setIsSharedNote] = useState(false)
   const [noteOwner, setNoteOwner] = useState(null)
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
+      StarterKit.configure({ 
+      heading: { levels: [1, 2, 3] },
+      codeBlock: false, // disable default codeBlock
+    }),
+    CodeBlockLowlight.configure({
+        lowlight,
+      defaultLanguage: 'javascript',
+    }),
       Underline,
       Link.configure({ openOnClick: false }),
       TextStyle,
@@ -236,6 +263,18 @@ export default function NoteEditor() {
     setSaved(false)
   }
 
+  const handleOpenLinkDialog = () => {
+    setLinkUrl(editor?.getAttributes('link').href || '')
+    setLinkDialogOpen(true)
+  }
+
+  const handleApplyLink = (url) => {
+    if (!editor || !url) return
+    editor.chain().focus().setLink({ href: url }).run()
+    setLinkDialogOpen(false)
+    setSaved(false)
+  }
+
   const handleBackNavigation = () => {
     if (!saved) {
       setLeaveConfirmOpen(true)
@@ -334,9 +373,13 @@ export default function NoteEditor() {
 
         <div className="flex flex-col gap-6 px-4 py-4 sm:px-6 sm:py-8 lg:flex-row">
             {/* Editor area */}
-            <div className="mx-auto flex-1 w-full max-w-3xl">
-                <Toolbar editor={editor} onDiagramClick={() => setDiagramModalOpen(true)} />
-                <div className="w-full rounded-2xl border border-slate-200 bg-white shadow-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
+            <div className="editor-workspace mx-auto flex w-full max-w-3xl flex-1 flex-col lg:min-h-0">
+              <Toolbar 
+                  editor={editor} 
+                  onDiagramClick={() => setDiagramModalOpen(true)} 
+                onLinkClick={handleOpenLinkDialog}
+              /> 
+               <div className="editor-document-scroll w-full min-h-0 flex-1 rounded-2xl border border-slate-200 bg-white shadow-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
                     <EditorContent editor={editor} />
                 </div>
             </div>
@@ -398,6 +441,14 @@ export default function NoteEditor() {
                 onConfirm={confirmLeaveEditor}
                 onCancel={() => setLeaveConfirmOpen(false)}
             />
+        )}
+
+        {linkDialogOpen && (
+          <LinkDialog
+            initialUrl={linkUrl}
+            onApply={handleApplyLink}
+            onClose={() => setLinkDialogOpen(false)}
+          />
         )}
      </div>
 )

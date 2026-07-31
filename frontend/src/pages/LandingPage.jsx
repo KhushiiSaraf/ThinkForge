@@ -16,7 +16,7 @@ function Navbar() {
           <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">ThinkForge</span>
         </div>
 
-        <nav className="hidden items-center gap-6 text-sm text-slate-600 md:flex dark:text-slate-300">
+        <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-6 text-sm text-slate-600 md:flex dark:text-slate-300">
           <a href="#features" className="transition hover:text-slate-900 dark:hover:text-white">Features</a>
           <a href="#pricing" className="transition hover:text-slate-900 dark:hover:text-white">Pricing</a>
         </nav>
@@ -88,7 +88,7 @@ export default function Landing() {
           <p className="mx-auto mt-4 max-w-xl leading-7 text-slate-500 dark:text-slate-400">
             A quick walkthrough of the AI workspace, note editor, and collaboration features.
           </p>
-          <div className="mt-10 overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 shadow-xl dark:border-slate-700">
+          <div className="mx-auto mt-10 max-w-3xl overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 shadow-xl dark:border-slate-700">
             <div className="aspect-video flex items-center justify-center px-4 text-slate-500 dark:text-slate-400">
               <p className="text-sm">Demo video coming soon</p>
             </div>
@@ -104,7 +104,7 @@ export default function Landing() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-500 p-6 transition hover:shadow-md sm:p-8">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-500 p-6 transition hover:shadow-md dark:hover:shadow-gray-600 sm:p-8">
             <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50">
               <Sparkles className="w-5 h-5 text-blue-600" />
             </div>
@@ -112,7 +112,7 @@ export default function Landing() {
             <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">Let AI help you draft summaries, rewrite content, and brainstorm ideas that match your style.</p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-500 p-6 hover:shadow-md transition sm:p-8">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-500 p-6 hover:shadow-md transition dark:hover:shadow-gray-600  sm:p-8">
             <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-6">
               <Search className="w-5 h-5 text-blue-600" />
             </div>
@@ -120,7 +120,7 @@ export default function Landing() {
             <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">Search the web without leaving your document. Drag and drop sources directly into your notes.</p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-500 p-6 hover:shadow-md transition sm:p-8">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-500 p-6 hover:shadow-md transition dark:hover:shadow-gray-600  sm:p-8">
             <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-6">
               <Users className="w-5 h-5 text-blue-600" />
             </div>
@@ -146,7 +146,7 @@ export default function Landing() {
                 ₹0 <span className="text-lg font-normal text-slate-400">/mo</span>
               </div>
               <ul className="mt-8 space-y-3">
-                {['Up to 20 notes', 'Basic AI assistance', 'Web search integration'].map(item => (
+                {['Unlimited notes', 'Basic AI assistance', 'Web search integration'].map(item => (
                   <li key={item} className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
                     <Check size={16} className="shrink-0 text-slate-400 dark:text-slate-500" />
                     {item}
@@ -171,7 +171,7 @@ export default function Landing() {
                 ₹99 <span className="text-lg font-normal text-slate-400">/mo</span>
               </div>
               <ul className="mt-8 space-y-3">
-                {['Unlimited AI queries', 'Advanced GPT-4 assistance', 'Full web search integration', 'Export to PDF & Markdown', 'Real-time collaboration', 'Priority support'].map(item => (
+                {['Note sharing with collaborators', 'PDF export', 'PDF upload (Ask AI about your PDF)'].map(item => (
                   <li key={item} className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
                     <Check size={16} className="shrink-0 text-blue-500" />
                     {item}
@@ -199,11 +199,7 @@ export default function Landing() {
             </div>
             <span className="text-sm font-bold dark:text-white">ThinkForge</span>
           </div>
-          <div className="flex gap-6 text-sm text-slate-500 dark:text-slate-400">
-            <a href="#" className="transition hover:text-slate-900 dark:hover:text-white">Privacy</a>
-            <a href="#" className="transition hover:text-slate-900 dark:hover:text-white">Terms</a>
-            <a href="#" className="transition hover:text-slate-900 dark:hover:text-white">Contact</a>
-          </div>
+      
           <p className="text-xs text-slate-400 dark:text-slate-500">© 2026 ThinkForge. All rights reserved.</p>
         </div>
       </footer>
