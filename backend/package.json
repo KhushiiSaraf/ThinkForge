@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "worker": "nodemon src/worker.js"
+      "start": "node index.js",
+      "dev": "nodemon index.js",
+      "worker": "node src/worker.js",
+      "worker:dev": "nodemon src/worker.js"
   },
   "keywords": [],
   "author": "",
