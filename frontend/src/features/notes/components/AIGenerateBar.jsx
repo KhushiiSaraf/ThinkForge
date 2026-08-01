@@ -48,9 +48,9 @@ function AIGenerateBar({
   return (
     <div className="fixed bottom-6 left-1/2 z-30 w-full max-w-xl -translate-x-1/2 px-4">
       {pdfMode && answer && (
-        <div className="mb-2 max-h-[50vh] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-4 shadow-lg transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
+        <div className="pdf-answer-scrollbar mb-2 flex max-h-[50vh] flex-col overflow-y-auto rounded-2xl border border-slate-200 bg-white p-4 shadow-lg transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
           <p className="whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-200">{answer}</p>
-          <div className="sticky bottom-0 mt-3 flex items-center gap-3 bg-white pt-2 transition-colors duration-300 dark:bg-slate-900">
+          <div className="sticky bottom-0 mt-3 flex items-center justify-end gap-3 border-t border-slate-200 bg-white pt-3 transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
             <button
               onClick={() => { onInsertAnswer(answer); onDismissAnswer() }}
               className="text-xs font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-300 dark:hover:text-indigo-200"

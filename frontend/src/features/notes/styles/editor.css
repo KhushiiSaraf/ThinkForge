@@ -309,6 +309,35 @@
     background-color: #475569;
 }
 
+.pdf-answer-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+.pdf-answer-scrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.pdf-answer-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.pdf-answer-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 9999px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+}
+
+.dark .pdf-answer-scrollbar {
+    scrollbar-color: #475569 transparent;
+}
+
+.dark .pdf-answer-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #475569;
+}
+
 /* Highlight border when focused */
 .tiptap:focus {
     border-color: #6366f1;

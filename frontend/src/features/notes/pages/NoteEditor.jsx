@@ -324,13 +324,30 @@ export default function NoteEditor() {
   }
 
   //Diagram
-    const handleInsertDiagram = (svg) => {
-        if (editor) {
-            const base64 = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`
-            editor.chain().focus().setImage({ src: base64 }).run()
+  const handleInsertDiagram = (svg) => {
+    if (editor) {
+        // convert SVG to PNG using canvas
+        const svgBlob = new Blob([svg], { type: 'image/svg+xml' })
+        const url = URL.createObjectURL(svgBlob)
+        
+        const img = new Image()
+        img.onload = () => {
+            const canvas = document.createElement('canvas')
+            canvas.width = img.width || 800
+            canvas.height = img.height || 600
+            const ctx = canvas.getContext('2d')
+            ctx.fillStyle = 'white'
+            ctx.fillRect(0, 0, canvas.width, canvas.height)
+            ctx.drawImage(img, 0, 0)
+            
+            const pngBase64 = canvas.toDataURL('image/png')
+            editor.chain().focus().setImage({ src: pngBase64 }).run()
             setSaved(false)
+            URL.revokeObjectURL(url)
         }
+        img.src = url
     }
+  }
 
     //PDF
     const handleInsertPdfAnswer = (answerText) => {
