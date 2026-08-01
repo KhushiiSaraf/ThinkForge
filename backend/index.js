@@ -4,14 +4,11 @@ const connectDB = require('./src/config/db.config');
 const { initSocket } = require('./src/socket');
 require('dotenv').config();
 
-const port = process.env.PORT || 7000
-
 connectDB();
 
-// create HTTP server manually instead of app.listen
+require('./src/workers/pdfProcessing.worker'); // starts the BullMQ worker in this same process
+
+const port = process.env.PORT || 7000;
 const server = http.createServer(app);
-
-// attach socket.io to the same server
 initSocket(server);
-
-server.listen(port, () => console.log(`Server running on port ${port}`))
+server.listen(port, () => console.log(`Server running on port ${port}`));
