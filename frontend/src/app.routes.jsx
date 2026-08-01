@@ -9,6 +9,8 @@ import VerifyEmail from './features/auth/pages/VerifyEmail'
 // import NotFound from './pages/NotFound'
 import Protected from './features/auth/components/Protected'
 import PublicRoute from './features/auth/components/PublicRoute'
+import NotFound from './pages/NotFound'
+
 
 export const router = createBrowserRouter([
     {
@@ -35,8 +37,8 @@ export const router = createBrowserRouter([
         path: "/verify-email",
         element: <PublicRoute><VerifyEmail /></PublicRoute>
     },
-    // {
-    // path: "*",
-    // element: <NotFound />
-    // }
+    {
+        path: "*",
+        element: <NotFound />
+    },
 ]);
