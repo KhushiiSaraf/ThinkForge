@@ -13,7 +13,7 @@ import {
   Unlink, GitFork
 } from 'lucide-react'
 import { useNotes } from '../hooks/useNotes'
-import { useAI } from '../hooks/useAI'
+import { useAI } from '../hooks/useAi'
 import { toast } from 'react-toastify'
 import EditorTopBar from '../components/EditorTopBar'
 import AIGenerateBar from '../components/AIGenerateBar'
