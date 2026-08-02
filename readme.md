@@ -32,8 +32,8 @@
 ## 🧪 Testing the App
 
 ### Test Account
-Login with this email and password
-Email: josh@gmail.com
+Login with this email and password  
+Email: josh@gmail.com  
 Password: josh1234
 
 ### Test Payment (Upgrade to Pro)
@@ -82,36 +82,38 @@ Password: josh1234
 ---
 
 ## 📁 Project Structure
+```text
 thinkforge/
 ├── frontend/
-│ └── src/
-│ ├── pages/
-│ ├── features/
-│ │ ├── auth/
-│ │ │ ├── components/
-│ │ │ ├── hooks/
-│ │ │ ├── pages/
-│ │ │ └── services/
-│ │ └── notes/
-│ │ ├── components/
-│ │ ├── hooks/
-│ │ ├── pages/
-│ │ ├── services/
-│ │ ├── styles/
-│ │ └── utils/
-│ └── components/
+│   └── src/
+│       ├── pages/
+│       ├── features/
+│       │   ├── auth/
+│       │   │   ├── components/
+│       │   │   ├── hooks/
+│       │   │   ├── pages/
+│       │   │   └── services/
+│       │   └── notes/
+│       │       ├── components/
+│       │       ├── hooks/
+│       │       ├── pages/
+│       │       ├── services/
+│       │       ├── styles/
+│       │       └── utils/
+│       └── components/
 └── backend/
-└── src/
-├── config/
-├── controllers/
-├── middleware/
-├── models/
-├── queues/
-├── routes/
-├── services/
-├── socket.js
-├── socket.emitter.js
-└── workers/
+    └── src/
+        ├── config/
+        ├── controllers/
+        ├── middleware/
+        ├── models/
+        ├── queues/
+        ├── routes/
+        ├── services/
+        ├── socket.js
+        ├── socket.emitter.js
+        └── workers/
+```
 
 ---
 
@@ -119,6 +121,7 @@ thinkforge/
 
 ### Backend
 
+```text
 PORT
 MONGO_URI
 JWT_SECRET
@@ -135,6 +138,7 @@ BREVO_SMTP_PORT
 BREVO_SMTP_USER
 BREVO_SMTP_PASS
 BREVO_FROM_EMAIL
+```
 
 ### Frontend
 
@@ -143,6 +147,7 @@ VITE_RAZORPAY_KEY_ID
 ---
 
 ## 🚦 API Routes
+```text
 POST /api/auth/register
 POST /api/auth/login
 POST /api/auth/logout
@@ -169,6 +174,7 @@ POST /api/payment/verify
 POST /api/rag/notes/:noteId/upload
 GET /api/rag/notes/:noteId/pdf
 POST /api/rag/notes/:noteId/ask
+```
 
 ---
 
