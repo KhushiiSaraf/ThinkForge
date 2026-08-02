@@ -2,7 +2,6 @@
 
 > A full-stack AI-powered note editor that brings the entire web into your writing space. Generate content, search the web, collaborate in real-time, and chat with your PDFs — all in one place.
 
-![ThinkForge](https://thinkforge-beta.vercel.app)
 
 ## 🚀 Live Demo
 
@@ -141,9 +140,11 @@ BREVO_FROM_EMAIL
 ```
 
 ### Frontend
-
+```text
 VITE_API_URL
 VITE_RAZORPAY_KEY_ID
+```
+
 ---
 
 ## 🚦 API Routes
@@ -213,7 +214,7 @@ npm run dev
 Built with ❤️ by **Khushi Saraf**
 
 - GitHub: https://github.com/KhushiiSaraf
-- LinkedIn: https://linkedin.com/in/your-linkedin
+- LinkedIn: https://www.linkedin.com/in/khushi-saraf-1bab6a242/
 ---
 
 ## 📄 License
