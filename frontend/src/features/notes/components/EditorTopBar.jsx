@@ -6,7 +6,7 @@ import ConfirmDialog from './ConfirmDialog'
 function EditorTopBar({ title, setTitle, saving, saved, onSave, onShareClick, onBackClick }) {
   const [exportDialogOpen, setExportDialogOpen] = useState(false)
 
- const handleExportPDF = async () => {
+const handleExportPDF = async () => {
     const element = document.querySelector('.tiptap')
     if (!element) return
 
@@ -15,9 +15,7 @@ function EditorTopBar({ title, setTitle, saving, saved, onSave, onShareClick, on
     clone.style.padding = '0'
     clone.style.minHeight = 'auto'
     clone.style.background = 'white'
-    clone.style.color = '#0f172a'
 
-    // convert all SVG base64 images to PNG
     const images = clone.querySelectorAll('img')
     await Promise.all(Array.from(images).map(img => {
         return new Promise((resolve) => {
@@ -28,13 +26,16 @@ function EditorTopBar({ title, setTitle, saving, saved, onSave, onShareClick, on
             const image = new Image()
             image.onload = () => {
                 const canvas = document.createElement('canvas')
-                canvas.width = image.naturalWidth || 800
-                canvas.height = image.naturalHeight || 600
+                canvas.width = Math.max(image.naturalWidth, 800) * 2
+                canvas.height = Math.max(image.naturalHeight, 600) * 2
                 const ctx = canvas.getContext('2d')
                 ctx.fillStyle = 'white'
                 ctx.fillRect(0, 0, canvas.width, canvas.height)
+                ctx.scale(2, 2)
                 ctx.drawImage(image, 0, 0)
                 img.src = canvas.toDataURL('image/png')
+                img.style.width = '100%'
+                img.style.height = 'auto'
                 resolve()
             }
             image.onerror = resolve
