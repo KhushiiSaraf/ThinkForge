@@ -326,34 +326,10 @@ export default function NoteEditor() {
   //Diagram
 const handleInsertDiagram = (svg) => {
     if (editor) {
-        console.log('svg received:', svg?.substring(0, 100))
-        const svgBlob = new Blob([svg], { type: 'image/svg+xml' })
-        const url = URL.createObjectURL(svgBlob)
-        
-        const img = new Image()
-        img.onload = () => {
-            console.log('img loaded, dimensions:', img.width, img.height)
-            const canvas = document.createElement('canvas')
-            canvas.width = img.width || 800
-            canvas.height = img.height || 600
-            const ctx = canvas.getContext('2d')
-            ctx.fillStyle = 'white'
-            ctx.fillRect(0, 0, canvas.width, canvas.height)
-            ctx.drawImage(img, 0, 0)
-            
-            const pngBase64 = canvas.toDataURL('image/png')
-            console.log('png generated, inserting...')
-            editor.chain().focus().setImage({ src: pngBase64 }).run()
-            setSaved(false)
-            URL.revokeObjectURL(url)
-        }
-        img.onerror = (e) => {
-            console.log('img load error:', e)
-        }
-        img.src = url
+        editor.chain().focus().insertContent(svg).run()
+        setSaved(false)
     }
 }
-
     //PDF
     const handleInsertPdfAnswer = (answerText) => {
       if (editor) {
