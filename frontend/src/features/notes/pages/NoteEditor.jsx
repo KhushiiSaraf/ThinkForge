@@ -324,12 +324,13 @@ export default function NoteEditor() {
   }
 
   //Diagram
-const handleInsertDiagram = (svg) => {
-    if (editor) {
-        editor.chain().focus().insertContent(svg).run()
-        setSaved(false)
-    }
-}
+  const handleInsertDiagram = (svg) => {
+      if (editor) {
+          const base64 = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`
+          editor.chain().focus().setImage({ src: base64 }).run()
+          setSaved(false)
+      }
+  }
     //PDF
     const handleInsertPdfAnswer = (answerText) => {
       if (editor) {
