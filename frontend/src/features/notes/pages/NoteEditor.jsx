@@ -33,6 +33,8 @@ import { usePdfRag } from '../hooks/usePdfRag'
 import { common, createLowlight } from 'lowlight'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 
+
+
 function Toolbar({ editor, onDiagramClick, onLinkClick }) {
   const [, refreshToolbar] = useState(0)
 

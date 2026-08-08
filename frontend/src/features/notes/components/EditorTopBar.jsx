@@ -6,57 +6,53 @@ import ConfirmDialog from './ConfirmDialog'
 function EditorTopBar({ title, setTitle, saving, saved, onSave, onShareClick, onBackClick }) {
   const [exportDialogOpen, setExportDialogOpen] = useState(false)
 
-  const handleExportPDF = () => {
+ const handleExportPDF = async () => {
     const element = document.querySelector('.tiptap')
-    if (!element) {
-      setExportDialogOpen(false)
-      return
-    }
+    if (!element) return
 
     const clone = element.cloneNode(true)
-    clone.classList.add('pdf-export-light')
     clone.style.border = 'none'
     clone.style.padding = '0'
     clone.style.minHeight = 'auto'
-    clone.style.height = 'auto'
-    clone.style.maxHeight = 'none'
-    clone.style.overflow = 'visible'
-    clone.style.background = '#ffffff'
+    clone.style.background = 'white'
     clone.style.color = '#0f172a'
 
-    clone.querySelectorAll('p, h1, h2, h3, li').forEach((node) => {
-      node.style.color = '#0f172a'
-      node.style.backgroundColor = 'transparent'
-    })
-
-    clone.querySelectorAll('pre').forEach((node) => {
-      node.style.background = '#111827'
-      node.style.color = '#e5e7eb'
-      node.style.border = '1px solid #263244'
-    })
-
-    clone.querySelectorAll('pre code').forEach((node) => {
-      node.style.background = 'transparent'
-      node.style.color = '#e5e7eb'
-      node.style.border = '0'
-    })
+    // convert all SVG base64 images to PNG
+    const images = clone.querySelectorAll('img')
+    await Promise.all(Array.from(images).map(img => {
+        return new Promise((resolve) => {
+            if (!img.src.startsWith('data:image/svg+xml')) {
+                resolve()
+                return
+            }
+            const image = new Image()
+            image.onload = () => {
+                const canvas = document.createElement('canvas')
+                canvas.width = image.naturalWidth || 800
+                canvas.height = image.naturalHeight || 600
+                const ctx = canvas.getContext('2d')
+                ctx.fillStyle = 'white'
+                ctx.fillRect(0, 0, canvas.width, canvas.height)
+                ctx.drawImage(image, 0, 0)
+                img.src = canvas.toDataURL('image/png')
+                resolve()
+            }
+            image.onerror = resolve
+            image.src = img.src
+        })
+    }))
 
     const options = {
-      margin: 1,
-      filename: `${title || 'note'}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff'
-      },
-      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        margin: 1,
+        filename: `${title || 'note'}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     }
 
     html2pdf().set(options).from(clone).save()
-    setExportDialogOpen(false)
-  }
+}
 
   return (
     <>
