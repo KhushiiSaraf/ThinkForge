@@ -89,8 +89,15 @@ export default function Landing() {
             A quick walkthrough of the AI workspace, note editor, and collaboration features.
           </p>
           <div className="mx-auto mt-10 max-w-3xl overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 shadow-xl dark:border-slate-700">
-            <div className="aspect-video flex items-center justify-center px-4 text-slate-500 dark:text-slate-400">
-              <p className="text-sm">Demo video coming soon</p>
+            <div className="aspect-video">
+              <iframe
+                className="h-full w-full"
+                src="https://www.youtube.com/embed/WfJXGg56x48?si=uQginRFiAdDwqegZ"
+                title="ThinkForge demo video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
             </div>
           </div>
         </div>
