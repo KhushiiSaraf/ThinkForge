@@ -15,6 +15,15 @@ const handleExportPDF = async () => {
     clone.style.padding = '0'
     clone.style.minHeight = 'auto'
     clone.style.background = 'white'
+    clone.style.color = '#0f172a'
+    clone.setAttribute('class', '')
+
+    // force all text to dark
+    clone.querySelectorAll('*').forEach(el => {
+        el.style.color = '#0f172a'
+        el.style.background = 'transparent'
+        el.style.borderColor = '#e2e8f0'
+    })
 
     const images = clone.querySelectorAll('img')
     await Promise.all(Array.from(images).map(img => {
@@ -26,15 +35,17 @@ const handleExportPDF = async () => {
             const image = new Image()
             image.onload = () => {
                 const canvas = document.createElement('canvas')
-                canvas.width = Math.max(image.naturalWidth, 800) * 2
-                canvas.height = Math.max(image.naturalHeight, 600) * 2
+                const scale = 2
+                canvas.width = (image.naturalWidth || 600) * scale
+                canvas.height = (image.naturalHeight || 400) * scale
                 const ctx = canvas.getContext('2d')
                 ctx.fillStyle = 'white'
                 ctx.fillRect(0, 0, canvas.width, canvas.height)
-                ctx.scale(2, 2)
+                ctx.scale(scale, scale)
                 ctx.drawImage(image, 0, 0)
                 img.src = canvas.toDataURL('image/png')
-                img.style.width = '100%'
+                img.style.maxWidth = '100%'
+                img.style.width = 'auto'
                 img.style.height = 'auto'
                 resolve()
             }
@@ -47,7 +58,12 @@ const handleExportPDF = async () => {
         margin: 1,
         filename: `${title || 'note'}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+        html2canvas: { 
+            scale: 2, 
+            useCORS: true, 
+            backgroundColor: '#ffffff',
+            logging: false
+        },
         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     }
