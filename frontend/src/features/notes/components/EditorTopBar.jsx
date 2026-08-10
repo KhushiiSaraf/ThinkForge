@@ -34,21 +34,26 @@ const handleExportPDF = async () => {
             }
             const image = new Image()
             image.onload = () => {
-                const canvas = document.createElement('canvas')
-                const scale = 2
-                canvas.width = (image.naturalWidth || 600) * scale
-                canvas.height = (image.naturalHeight || 400) * scale
-                const ctx = canvas.getContext('2d')
-                ctx.fillStyle = 'white'
-                ctx.fillRect(0, 0, canvas.width, canvas.height)
-                ctx.scale(scale, scale)
-                ctx.drawImage(image, 0, 0)
-                img.src = canvas.toDataURL('image/png')
-                img.style.maxWidth = '100%'
-                img.style.width = 'auto'
-                img.style.height = 'auto'
-                resolve()
-            }
+    // get actual rendered size from the img element in the DOM
+    const originalImg = element.querySelector('img[src*="svg+xml"]')
+    const renderedWidth = originalImg ? originalImg.offsetWidth : 600
+    const renderedHeight = originalImg ? originalImg.offsetHeight : 400
+    
+    const canvas = document.createElement('canvas')
+    const scale = 2
+    canvas.width = renderedWidth * scale
+    canvas.height = renderedHeight * scale
+    const ctx = canvas.getContext('2d')
+    ctx.fillStyle = 'white'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.scale(scale, scale)
+    ctx.drawImage(image, 0, 0, renderedWidth, renderedHeight)
+    img.src = canvas.toDataURL('image/png')
+    img.style.maxWidth = '100%'
+    img.style.width = `${renderedWidth}px`
+    img.style.height = 'auto'
+    resolve()
+}
             image.onerror = resolve
             image.src = img.src
         })
