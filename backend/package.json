@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-      "start": "node index.js",
-      "dev": "nodemon index.js",
-      "worker": "node src/worker.js",
-      "worker:dev": "nodemon src/worker.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "worker": "node src/worker.js",
+    "worker:dev": "nodemon src/worker.js"
   },
   "keywords": [],
   "author": "",
@@ -33,7 +33,6 @@
     "langchain": "^1.5.3",
     "mongoose": "^9.7.1",
     "multer": "^2.2.0",
-    "nodemailer": "^9.0.3",
     "pdf-parse": "^2.4.5",
     "razorpay": "^2.9.6",
     "socket.io": "^4.8.3"

@@ -52,15 +52,12 @@ async function registerUserController(req, res) {
         })
         await newUser.save();
 
-        // fire off the verification email — don't let a failure here break registration
-        try {
-            const otp = generateOtp();
-            await storeOtp(newUser._id, otp);
-            await sendOtpEmail(newUser.email, otp);
-        } catch (emailErr) {
+        const otp = generateOtp();
+        await storeOtp(newUser._id, otp);
+
+        sendOtpEmail(newUser.email, otp).catch((emailErr) => {
             console.error('Failed to send verification OTP:', emailErr);
-            // intentionally not returning an error response — registration itself succeeded
-        }
+        });
 
         res.status(201).json({
             message: "User registered successfully. Please verify your email.",
@@ -216,7 +213,10 @@ async function sendOtpController(req, res) {
         const otp = generateOtp();
         await storeOtp(user._id, otp);
         await setCooldown(user._id);
-        await sendOtpEmail(user.email, otp);
+
+        sendOtpEmail(user.email, otp).catch((emailErr) => {
+            console.error('Failed to resend verification OTP:', emailErr);
+        });
 
         res.status(200).json({ message: "Verification code sent" });
     } catch (error) {
