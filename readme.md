@@ -19,12 +19,11 @@
 - ✏️ AI rewrite selected text with custom instructions
 - 🔍 In-editor web search panel
 - 📊 AI-generated flowchart diagrams (Mermaid)
+- 📄 Export notes as PDF
 
 ### Pro Plan (₹99/month)
 - 🔗 Share notes with collaborators
-- 📄 Export notes as PDF
 - 📚 PDF Upload + RAG — ask AI questions about your uploaded PDFs
-- ⚡ Background PDF processing (BullMQ)
 
 ---
 
@@ -36,11 +35,15 @@ Email: josh@gmail.com
 Password: josh1234
 
 ### Test Payment (Upgrade to Pro)
-1. Click **"Go Pro"** on the dashboard or landing page
-2. Select **Netbanking**
-3. Choose any bank from the list
-4. On the test page that appears, click **"Success"**
-5. You'll be upgraded to Pro instantly
+**Option 1 — Test Card:**
+- Card Number: `4100 2800 0000 1007`
+- Expiry: any future date (e.g. 12/26)
+- CVV: any 3 digits
+- OTP: check your phone
+
+**Option 2 — Netbanking:**
+1. Select Netbanking → choose any bank
+2. On the test page click "Success"
 
 > ℹ️ Payments are in **test mode** — no real money is charged.
 
@@ -71,12 +74,19 @@ Password: josh1234
 - **Serper.dev** — web search
 - **Qdrant Cloud** — vector database for PDF RAG
 - **Razorpay** — payment gateway (test mode)
-- **Brevo SMTP** — transactional email (OTP)
+- **Brevo REST API** — transactional email (OTP)
 - **LangChain** — RAG pipeline (chunking, embedding, retrieval)
 
 ### Hosting
 - **Vercel** — frontend
-- **Render** — backend + worker
+- **Render** — backend (Express + BullMQ worker)
+
+## ⚙️ Background Processing
+
+PDF processing is handled asynchronously using **BullMQ + Redis**. When a PDF is uploaded, the processing job is added to a queue and handled by a BullMQ worker running alongside the Express server.
+
+For deployment, the worker runs within the same Render Web Service rather than as a separate Background Worker, keeping the application compatible with Render's free-tier deployment.
+
 
 ---
 
@@ -132,10 +142,7 @@ QDRANT_API_KEY
 REDIS_URL
 RAZORPAY_KEY_ID
 RAZORPAY_KEY_SECRET
-BREVO_SMTP_HOST
-BREVO_SMTP_PORT
-BREVO_SMTP_USER
-BREVO_SMTP_PASS
+BREVO_API_KEY
 BREVO_FROM_EMAIL
 ```
 
@@ -189,7 +196,7 @@ POST /api/rag/notes/:noteId/ask
 - Gemini API key
 - Serper.dev API key
 - Razorpay test keys
-- Brevo SMTP credentials
+- Brevo API key
 
 ### Backend
 ```bash
