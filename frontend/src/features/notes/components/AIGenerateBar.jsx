@@ -67,7 +67,7 @@ function AIGenerateBar({
         </div>
       )}
 
-      <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-lg transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
+      <div className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-3 shadow-lg transition-colors duration-300 sm:flex-row sm:items-center sm:gap-2 sm:px-4 dark:border-slate-800 dark:bg-slate-900">
         <div className="group relative shrink-0">
           <button
             onClick={() => setPdfMode(false)}
@@ -98,8 +98,8 @@ function AIGenerateBar({
         </div>
 
         {pdfMode && !isPdfReady ? (
-          <div className="flex flex-1 items-center justify-between">
-            <span className="text-sm text-slate-500 dark:text-slate-400">
+          <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <span className="min-w-0 flex-1 text-sm text-slate-500 dark:text-slate-400">
               {checkingExisting
                 ? "Checking for existing PDF..."
                 : isPdfProcessing
@@ -112,7 +112,7 @@ function AIGenerateBar({
               onClick={() => fileInputRef.current?.click()}
               disabled={isPdfProcessing || checkingExisting}
               title="Maximum PDF file size: 20 MB"
-              className="flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-700 disabled:opacity-50 dark:text-indigo-300 dark:hover:text-indigo-200"
+              className="flex items-center justify-center gap-1 self-start rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-indigo-600 hover:text-indigo-700 disabled:opacity-50 dark:border-slate-700 dark:text-indigo-300 dark:hover:text-indigo-200 sm:self-auto"
             >
               {isPdfProcessing ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
               Upload
@@ -136,12 +136,12 @@ function AIGenerateBar({
                   ? `Ask a question about ${fileName || 'your PDF'}...`
                   : "Ask AI to expand on this topic or generate a summary..."
               }
-              className="flex-1 bg-transparent text-sm outline-none text-slate-700 placeholder:text-slate-400 dark:text-slate-200 dark:placeholder:text-slate-500"
+              className="min-w-0 flex-1 bg-transparent text-sm outline-none text-slate-700 placeholder:text-slate-400 dark:text-slate-200 dark:placeholder:text-slate-500"
             />
             <button
               onClick={handleSubmit}
               disabled={loading || asking || !prompt.trim()}
-              className="flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:opacity-50 dark:bg-indigo-600 dark:hover:bg-indigo-500"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:opacity-50 sm:w-auto dark:bg-indigo-600 dark:hover:bg-indigo-500"
             >
               {pdfMode ? (asking ? 'Thinking...' : 'Ask') : (loading ? 'Generating...' : 'Generate')}
               <Sparkles size={14} />
