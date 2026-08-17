@@ -141,6 +141,7 @@ dark:bg-slate-800 rounded-xl px-3 py-2 w-56">
             >
               <Search size={18} className="text-slate-600 dark:text-slate-300" />
             </button>
+            <ThemeToggle className="h-9 w-9 border-slate-200 bg-white/80 dark:border-slate-700 dark:bg-slate-800/80" />
             <button onClick={() => setMenuOpen(!menuOpen)} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
               {menuOpen ? <X size={18} className="text-slate-600 dark:text-slate-300" /> : <Menu size={18} className="text-slate-600 dark:text-slate-300" />}
             </button>
