@@ -35,6 +35,7 @@ export const useSocket = (noteId, user, editor, { onPdfStatus } = {}) => {
 
     const emitUpdate = (content) => {
         if (socketRef.current && user?.plan === 'pro') {
+            console.log('emitting update...')
             socketRef.current.emit('note-update', { noteId, content })
         }
     }
