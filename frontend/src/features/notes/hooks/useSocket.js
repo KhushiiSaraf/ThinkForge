@@ -5,7 +5,7 @@ export const useSocket = (noteId, user, editor, { onPdfStatus } = {}) => {
     const socketRef = useRef(null)
 
     useEffect(() => {
-        if (!noteId || !user || user.plan !== 'pro') return
+        if (!noteId || !user) return
 
         socketRef.current = io(import.meta.env.VITE_API_URL, {
             withCredentials: true
@@ -34,8 +34,7 @@ export const useSocket = (noteId, user, editor, { onPdfStatus } = {}) => {
     }, [noteId, user, editor])
 
     const emitUpdate = (content) => {
-        if (socketRef.current && user?.plan === 'pro') {
-            console.log('emitting update...')
+        if (socketRef.current) {
             socketRef.current.emit('note-update', { noteId, content })
         }
     }
